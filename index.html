@@ -1045,13 +1045,14 @@ var PROFILES = [
   { name:'Carlos M.',  est:'The Tipsy Turtle',       vibe:'Mezcal missionary. Tequila translator. I make agave make sense.',                                photo:'https://randomuser.me/api/portraits/men/55.jpg',   init:'CM', likes:58  }
 ];
 
-var allProfiles = PROFILES.slice();
+var allProfiles = [];
 var deckIdx     = 0;
 var activeCard  = null;
 var isDragging  = false;
 var startX      = 0;
 var curX        = 0;
 var deckInited  = false;
+var profilesLoaded = false;
 
 // ══════════════════════════════════════════════
 //  CLOCK
@@ -1258,7 +1259,49 @@ function populateMyProfile() {
 function initDeck() {
   deckIdx = 0;
   deckInited = true;
-  renderDeck();
+
+  if (profilesLoaded) {
+    renderDeck();
+    return;
+  }
+
+  // Show loading state
+  var wrap = document.getElementById('deck-wrap');
+  wrap.innerHTML = '<div style="text-align:center;padding:80px 24px;"><div class="spinner" style="width:32px;height:32px;border:3px solid #1e1e2e;border-top-color:#ff5a1a;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div><div style="font-size:13px;color:#555;letter-spacing:0.05em;">Loading Tenders…</div></div>';
+
+  // Fetch real profiles from sheet
+  fetch(SCRIPT_URL + '?action=profiles')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      profilesLoaded = true;
+      var real = (d.result === 'success' && d.profiles && d.profiles.length > 0) ? d.profiles : [];
+
+      // Build initials for real profiles
+      real = real.map(function(p) {
+        p.init = (p.name || '').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2) || '??';
+        return p;
+      });
+
+      // Real profiles first, then demo profiles as fallback
+      allProfiles = real.concat(PROFILES.slice());
+
+      // Remove dupes by name (in case someone in sheet matches a demo name)
+      var seen = {};
+      allProfiles = allProfiles.filter(function(p) {
+        if (seen[p.name]) return false;
+        seen[p.name] = true;
+        return true;
+      });
+
+      document.getElementById('tender-count').textContent = allProfiles.length;
+      renderDeck();
+    })
+    .catch(function() {
+      // Fall back to demo profiles if fetch fails
+      profilesLoaded = true;
+      allProfiles = PROFILES.slice();
+      renderDeck();
+    });
 }
 
 function resetDeck() {
