@@ -233,6 +233,10 @@ input.err,textarea.err { border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 3px 
       👀 I'm a Patron
       <div class="role-tag">Discover bartenders · Send follow requests</div>
     </button>
+    <button class="role-btn" onclick="goToAdmin()" style="border-color:var(--dim);color:var(--muted);max-width:320px;width:100%;padding:12px;margin-top:8px;">
+      ⚙️ Admin Access
+      <div class="role-tag">Partners only</div>
+    </button>
   </div>
 </div>
 
@@ -525,6 +529,13 @@ tick(); setInterval(tick,10000);
 // ══════════════════════════════════════════════
 //  ROLE SELECTION
 // ══════════════════════════════════════════════
+function goToAdmin() {
+  // Show bottom nav and go straight to admin screen
+  document.getElementById('bottom-nav').style.display = 'flex';
+  document.getElementById('nav-admin').style.display  = 'flex';
+  switchScreen('admin');
+}
+
 function setRole(role) {
   appState.role = role;
   document.getElementById('bottom-nav').style.display = 'flex';
