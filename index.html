@@ -201,6 +201,9 @@ input.err,textarea.err { border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 3px 
 .role-patron:hover { background:rgba(64,196,255,0.08); box-shadow:0 8px 28px rgba(64,196,255,0.2); }
 .role-tag { font-size:11px; font-weight:400; letter-spacing:0.05em; color:var(--muted); margin-top:4px; font-family:'DM Sans',sans-serif; }
 
+.admin-tab { flex:1; padding:8px 4px; background:transparent; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:color 0.2s,border-color 0.2s; }
+.active-admin-tab { color:var(--orange); border-bottom-color:var(--orange); }
+
 /* Loading */
 .loading-state { text-align:center; padding:80px 24px; }
 .loading-spinner { width:32px; height:32px; border:3px solid var(--edge); border-top-color:var(--orange); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
@@ -421,6 +424,38 @@ input.err,textarea.err { border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 3px 
   </div>
 </div>
 
+<!-- ══════════ ADMIN DASHBOARD ══════════ -->
+<div class="screen" id="screen-admin">
+  <div class="sbar"><span id="clk6">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="scr-hdr"><div class="scr-title" style="color:var(--orange);">ADMIN DASHBOARD</div><span style="font-size:10px;color:var(--muted);">MyTenderApp</span></div>
+  <div id="admin-pin-view" style="padding:0 16px 24px;">
+    <div class="pin-wrap">
+      <div class="pin-icon">&#128273;</div>
+      <div class="pin-title">ADMIN ACCESS</div>
+      <div class="pin-sub">Enter your admin email and PIN to access the full platform dashboard.</div>
+      <div class="field" style="margin-bottom:14px;text-align:left;"><div class="flabel">Admin Email</div><input id="admin-email" type="email" autocomplete="email" placeholder="your@email.com"></div>
+      <div class="field" style="margin-bottom:14px;"><div class="flabel">Admin PIN</div><input class="pin-input" id="admin-pin-input" type="number" placeholder="&#8226;&#8226;&#8226;&#8226;" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pin-error" id="admin-pin-error">Incorrect email or PIN.</div></div>
+      <button class="btn-or" onclick="checkAdminPin()"><div class="btn-inner"><i class="ti ti-shield-check"></i><span>Access Admin Dashboard</span></div></button>
+    </div>
+  </div>
+  <div id="admin-content" style="display:none;padding:0 16px 24px;">
+    <div class="stat-row" style="margin-bottom:14px;">
+      <div class="stat-card"><div class="stat-num" style="color:var(--orange);" id="admin-total-tenders">-</div><div class="stat-lbl">Tenders</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--blue);" id="admin-total-patrons">-</div><div class="stat-lbl">Patrons</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--green);" id="admin-total-requests">-</div><div class="stat-lbl">Requests</div></div>
+    </div>
+    <div style="display:flex;border-bottom:1px solid var(--edge);margin-bottom:14px;">
+      <button class="admin-tab active-admin-tab" id="atab-tenders" onclick="switchAdminTab('tenders')">Tenders</button>
+      <button class="admin-tab" id="atab-patrons" onclick="switchAdminTab('patrons')">Patrons</button>
+      <button class="admin-tab" id="atab-requests" onclick="switchAdminTab('requests')">Requests</button>
+    </div>
+    <div id="admin-tenders-view"><div id="admin-tenders-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
+    <div id="admin-patrons-view" style="display:none;"><div id="admin-patrons-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
+    <div id="admin-requests-view" style="display:none;"><div id="admin-requests-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
+    <button class="btn-outline" onclick="lockAdmin()" style="margin-top:16px;">LOCK ADMIN</button>
+  </div>
+</div>
+
 <!-- ══════════ BOTTOM NAV ══════════ -->
 <nav class="bnav" id="bottom-nav" style="display:none;">
   <button class="ni active" id="nav-discover" onclick="switchScreen('discover')">
@@ -431,6 +466,9 @@ input.err,textarea.err { border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 3px 
   </button>
   <button class="ni" id="nav-dashboard" onclick="switchScreen('tender-dashboard')" style="display:none;">
     <i class="ti ti-shield-lock" style="color:var(--pink);"></i><span class="nl" style="color:var(--pink);">Dashboard</span>
+  </button>
+  <button class="ni" id="nav-admin" onclick="switchScreen('admin')" style="display:none;">
+    <i class="ti ti-settings" style="color:var(--orange);"></i><span class="nl" style="color:var(--orange);">Admin</span>
   </button>
 </nav>
 
@@ -490,6 +528,7 @@ tick(); setInterval(tick,10000);
 function setRole(role) {
   appState.role = role;
   document.getElementById('bottom-nav').style.display = 'flex';
+  document.getElementById('nav-admin').style.display = 'flex';
 
   if (role === 'tender') {
     document.getElementById('nav-dashboard').style.display = 'flex';
@@ -514,7 +553,8 @@ function switchScreen(name) {
     'myprofile':         'nav-myprofile',
     'tender-dashboard':  'nav-dashboard',
     'tender-create':     'nav-myprofile',
-    'patron-create':     'nav-myprofile'
+    'patron-create':     'nav-myprofile',
+    'admin':             'nav-admin'
   };
   if (navMap[name]) {
     var navEl = document.getElementById(navMap[name]);
@@ -1082,6 +1122,117 @@ function showToast(msg, isOrange) {
 // ══════════════════════════════════════════════
 //  UTIL
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════════════
+var ADMIN_PIN    = '6969';
+var ADMIN_EMAILS = ['leap31@comcast.net','customstripe55@gmail.com','sjwroblewski@gmail.com'];
+var adminData    = null;
+
+function checkAdminPin() {
+  var email = document.getElementById('admin-email').value.trim().toLowerCase();
+  var pin   = document.getElementById('admin-pin-input').value.trim();
+  var errEl = document.getElementById('admin-pin-error');
+  var validEmail = ADMIN_EMAILS.some(function(e){ return e.toLowerCase() === email; });
+  if (!validEmail || pin !== ADMIN_PIN) { errEl.classList.add('show'); return; }
+  errEl.classList.remove('show');
+  document.getElementById('admin-pin-view').style.display  = 'none';
+  document.getElementById('admin-content').style.display   = 'block';
+  loadAdminData();
+}
+
+function lockAdmin() {
+  document.getElementById('admin-pin-view').style.display  = 'block';
+  document.getElementById('admin-content').style.display   = 'none';
+  document.getElementById('admin-pin-input').value = '';
+  document.getElementById('admin-email').value     = '';
+  adminData = null;
+}
+
+function switchAdminTab(tab) {
+  ['tenders','patrons','requests'].forEach(function(t) {
+    document.getElementById('admin-'+t+'-view').style.display = t===tab?'block':'none';
+    document.getElementById('atab-'+t).className = t===tab?'admin-tab active-admin-tab':'admin-tab';
+  });
+}
+
+function loadAdminData() {
+  fetch(SCRIPT_URL + '?action=admin')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.result !== 'success') { showToast('Could not load admin data.', true); return; }
+      adminData = d;
+      document.getElementById('admin-total-tenders').textContent  = (d.tenders  ||[]).length;
+      document.getElementById('admin-total-patrons').textContent   = (d.patrons  ||[]).length;
+      document.getElementById('admin-total-requests').textContent  = (d.requests ||[]).length;
+      renderAdminTenders(d.tenders  ||[]);
+      renderAdminPatrons(d.patrons  ||[]);
+      renderAdminRequests(d.requests||[]);
+    })
+    .catch(function(){ showToast('Could not load admin data.', true); });
+}
+
+function renderAdminTenders(tenders) {
+  var el = document.getElementById('admin-tenders-list');
+  if (!tenders.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No tenders yet.</div>'; return; }
+  el.innerHTML = tenders.map(function(t) {
+    var init = (t.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
+    var photoHtml = t.photo ? '<img src="'+esc(t.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,0.3);">' : '<div class="req-avatar">'+esc(init)+'</div>';
+    return '<div class="req-card">'+
+      '<div class="req-row">'+photoHtml+
+      '<div class="req-info"><div class="req-name">'+esc(t.name)+'</div>'+
+      '<div class="req-detail">'+esc(t.est)+'</div>'+
+      '<div class="req-detail" style="color:var(--orange);">'+'❤️ '+(t.likes||0)+' likes</div></div></div>'+
+      '<div style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;">"'+esc(t.vibe)+'"</div></div>';
+  }).join('');
+}
+
+function renderAdminPatrons(patrons) {
+  var el = document.getElementById('admin-patrons-list');
+  if (!patrons.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No patrons yet.</div>'; return; }
+  el.innerHTML = patrons.map(function(p) {
+    var init = ((p.firstName||'?')[0]+(p.lastName||'?')[0]).toUpperCase();
+    var photoHtml = p.photo ? '<img src="'+esc(p.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,0.3);">' : '<div class="req-avatar" style="border-color:rgba(64,196,255,0.2);color:var(--blue);">'+esc(init)+'</div>';
+    return '<div class="req-card"><div class="req-row">'+photoHtml+
+      '<div class="req-info"><div class="req-name">'+esc((p.firstName||'')+' '+(p.lastName||''))+'</div>'+
+      '<div class="req-detail">'+esc(p.email)+'</div>'+
+      '<div class="req-detail">'+esc(p.phone)+'</div></div></div></div>';
+  }).join('');
+}
+
+function renderAdminRequests(requests) {
+  var el = document.getElementById('admin-requests-list');
+  if (!requests.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No follow requests yet.</div>'; return; }
+  el.innerHTML = requests.map(function(r, i) {
+    var init = (r.patronName||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
+    var photoHtml = r.patronPhoto ? '<img src="'+esc(r.patronPhoto)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,0.3);">' : '<div class="req-avatar">'+esc(init)+'</div>';
+    var statusHtml = r.status==='approved' ? '<span class="req-status req-approved">✓ Approved</span>' :
+      r.status==='denied' ? '<span class="req-status req-denied">✕ Denied</span>' :
+      '<div class="req-actions"><button class="req-approve" onclick="adminHandleRequest('+i+','approved')">'+'✓ Approve</button><button class="req-deny" onclick="adminHandleRequest('+i+','denied')">✕ Deny</button></div>';
+    return '<div class="req-card" id="areq-'+i+'">'+
+      '<div style="font-size:10px;color:var(--muted);margin-bottom:8px;">→ <span style="color:var(--orange);">'+esc(r.tenderName)+'</span></div>'+
+      '<div class="req-row">'+photoHtml+
+      '<div class="req-info"><div class="req-name">'+esc(r.patronName)+'</div>'+
+      '<div class="req-detail">'+esc(r.patronEmail)+'</div></div></div>'+
+      statusHtml+'</div>';
+  }).join('');
+  window._adminRequests = requests;
+}
+
+function adminHandleRequest(idx, status) {
+  var req = window._adminRequests[idx];
+  if (!req) return;
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'action=adminUpdateFollow&tenderName='+encodeURIComponent(req.tenderName)+'&patronEmail='+encodeURIComponent(req.patronEmail)+'&status='+encodeURIComponent(status)
+  }).catch(function(){});
+  var card = document.getElementById('areq-'+idx);
+  var actDiv = card.querySelector('.req-actions');
+  if (actDiv) actDiv.outerHTML = status==='approved' ? '<span class="req-status req-approved">✓ Approved</span>' : '<span class="req-status req-denied">✕ Denied</span>';
+  showToast(status==='approved'?'✓ Approved!':'✕ Denied');
+}
+
 function esc(s) {
   return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
 }
