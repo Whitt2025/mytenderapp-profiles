@@ -629,6 +629,7 @@ function validateTF(k) {
 
 Object.keys(TF).forEach(function(k){
   window.addEventListener('DOMContentLoaded', function(){
+  Object.keys(TF).forEach(function(k){
     var el = document.getElementById(TF[k].id);
     if (!el) return;
     el.addEventListener('blur',  function(){TF[k].touched=true; validateTF(k);});
@@ -1246,6 +1247,7 @@ function adminHandleRequest(idx, status) {
 
 function esc(s) {
   return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
 }
 </script>
 </body>
