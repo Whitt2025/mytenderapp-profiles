@@ -4,1251 +4,915 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <title>MyTenderApp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --orange: #ff5a1a; --orange-glow: rgba(255,90,26,0.18);
-  --green: #00e676; --pink: #ff4081; --blue: #40c4ff;
-  --bg: #0d0d14; --card: #13131f; --edge: #1e1e2e;
-  --text: #e8e0d0; --muted: #666; --dim: #333;
-  --nb-h: 54px;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --or:#ff5a1a;--og:rgba(255,90,26,0.18);
+  --gn:#00e676;--pk:#ff4081;--bl:#40c4ff;
+  --bg:#0d0d14;--cd:#13131f;--eg:#1e1e2e;
+  --tx:#e8e0d0;--mu:#666;--dm:#333;
+  --nb:54px;
 }
-html,body { height:100%; width:100%; overflow:hidden; background:var(--bg); font-family:'DM Sans',sans-serif; color:var(--text); -webkit-font-smoothing:antialiased; }
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);-webkit-font-smoothing:antialiased;}
 
-/* ── SCREENS ── */
-.screen { display:none; position:fixed; inset:0; bottom:var(--nb-h); overflow-y:auto; -webkit-overflow-scrolling:touch; background:var(--bg); }
-.screen::-webkit-scrollbar { display:none; }
-.screen.active { display:block; }
+/* SCREENS */
+.screen{display:none;position:fixed;inset:0;bottom:var(--nb);overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);}
+.screen::-webkit-scrollbar{display:none;}
+.screen.active{display:block;}
 
-/* ── STATUS BAR ── */
-.sbar { display:flex; justify-content:space-between; align-items:center; padding:10px 20px 4px; font-size:11px; color:var(--muted); position:sticky; top:0; background:var(--bg); z-index:50; }
+/* STATUS BAR */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 4px;font-size:11px;color:var(--mu);position:sticky;top:0;background:var(--bg);z-index:50;}
 
-/* ── BOTTOM NAV ── */
-.bnav { position:fixed; bottom:0; left:0; right:0; height:var(--nb-h); background:#11111c; border-top:1px solid var(--edge); display:flex; z-index:100; padding-bottom:env(safe-area-inset-bottom); }
-.ni { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; opacity:0.35; transition:opacity 0.18s; padding:4px 0; border:none; background:transparent; }
-.ni.active { opacity:1; }
-.ni i { font-size:20px; color:var(--orange); }
-.nl { font-size:9px; font-weight:600; letter-spacing:0.5px; color:var(--orange); text-transform:uppercase; }
-.ni.green i,.ni.green .nl { color:var(--green); }
-.ni.pink  i,.ni.pink  .nl { color:var(--pink); }
-.ni.blue  i,.ni.blue  .nl { color:var(--blue); }
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nb);background:#11111c;border-top:1px solid var(--eg);display:none;z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;opacity:.35;transition:opacity .18s;padding:4px 0;border:none;background:transparent;}
+.ni.active{opacity:1;}
+.ni i{font-size:20px;color:var(--or);}
+.nl{font-size:9px;font-weight:600;letter-spacing:.5px;color:var(--or);text-transform:uppercase;}
+.ni.gn i,.ni.gn .nl{color:var(--gn);}
+.ni.pk i,.ni.pk .nl{color:var(--pk);}
+.ni.bl i,.ni.bl .nl{color:var(--bl);}
 
-/* ── SCREEN HEADER ── */
-.scr-hdr { display:flex; align-items:center; justify-content:space-between; padding:8px 16px 4px; }
-.scr-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:#ccc; }
+/* SCREEN HEADER */
+.shdr{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 4px;}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:#ccc;}
 
-/* ── APP LOGO ── */
-.logo-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:4px; }
-.app-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; color:var(--orange); text-shadow:0 0 20px rgba(255,90,26,0.4); }
-.live-chip { display:inline-flex; align-items:center; gap:5px; background:rgba(255,90,26,0.08); border:1px solid rgba(255,90,26,0.22); border-radius:20px; padding:3px 10px; font-size:10px; color:var(--orange); font-weight:600; margin-bottom:12px; }
-.dot-live { width:5px; height:5px; border-radius:50%; background:var(--orange); animation:pulse 1.4s infinite; }
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+/* APP LOGO */
+.appname{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--or);text-shadow:0 0 20px rgba(255,90,26,.4);}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,90,26,.08);border:1px solid rgba(255,90,26,.22);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--or);font-weight:600;margin-bottom:12px;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--or);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
-/* ── SWIPE DECK ── */
-.deck-header { text-align:center; padding:10px 16px 0; }
-.deck-counter { display:flex; justify-content:center; gap:5px; padding:4px 0 8px; }
-.cdot { width:5px; height:5px; border-radius:50%; background:var(--edge); transition:background 0.2s,transform 0.2s; }
-.cdot.on { background:var(--orange); transform:scale(1.4); }
-.deck-wrap { position:relative; width:100%; height:430px; padding:0 16px; margin-bottom:10px; }
-.swipe-card { position:absolute; inset:0; margin:0 16px; border-radius:14px; overflow:hidden; background:var(--card); border:1px solid var(--edge); box-shadow:0 20px 60px rgba(0,0,0,0.7); cursor:grab; user-select:none; touch-action:none; }
-.swipe-card:active { cursor:grabbing; }
-.card-photo { width:100%; height:300px; object-fit:cover; display:block; }
-.card-photo-placeholder { width:100%; height:300px; background:linear-gradient(135deg,#0f0f1a,#1a1a2e); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:80px; color:rgba(255,90,26,0.2); }
-.card-gradient { position:absolute; bottom:110px; left:0; right:0; height:140px; background:linear-gradient(transparent,rgba(13,13,20,0.95)); pointer-events:none; }
-.card-info { position:absolute; bottom:0; left:0; right:0; padding:12px 16px 14px; background:var(--card); }
-.card-name { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; color:#fff; line-height:1; margin-bottom:3px; }
-.card-bar { font-size:12px; color:var(--green); font-weight:500; margin-bottom:5px; }
-.card-vibe { font-size:11px; font-weight:300; color:var(--muted); line-height:1.5; font-style:italic; }
-.stamp { position:absolute; top:36px; font-family:'Bebas Neue',sans-serif; font-size:44px; letter-spacing:3px; border:4px solid; border-radius:4px; padding:2px 12px; opacity:0; pointer-events:none; }
-.stamp-like { left:16px; color:var(--green); border-color:var(--green); transform:rotate(-15deg); }
-.stamp-nope { right:16px; color:#ff4444; border-color:#ff4444; transform:rotate(15deg); }
-.swipe-actions { display:flex; justify-content:center; gap:24px; padding:0 16px 6px; }
-.abtn { width:56px; height:56px; border-radius:50%; border:2px solid; display:flex; align-items:center; justify-content:center; cursor:pointer; background:var(--card); transition:transform 0.15s,box-shadow 0.15s; font-size:22px; }
-.abtn:hover { transform:scale(1.08); }
-.abtn:active { transform:scale(0.93); }
-.abtn-nope { border-color:#ff4444; color:#ff4444; }
-.abtn-like { border-color:var(--green); color:var(--green); }
-.swipe-hint { text-align:center; font-size:10px; color:var(--dim); letter-spacing:0.06em; padding-bottom:6px; }
-.deck-empty { display:none; text-align:center; padding:50px 24px 24px; }
-.deck-empty.show { display:block; }
+/* SWIPE DECK */
+.dhdr{text-align:center;padding:10px 16px 0;}
+.dctr{display:flex;justify-content:center;gap:5px;padding:4px 0 8px;}
+.cdot{width:5px;height:5px;border-radius:50%;background:var(--eg);transition:background .2s,transform .2s;}
+.cdot.on{background:var(--or);transform:scale(1.4);}
+.dwrap{position:relative;width:100%;height:430px;padding:0 16px;margin-bottom:10px;}
+.scard{position:absolute;inset:0;margin:0 16px;border-radius:14px;overflow:hidden;background:var(--cd);border:1px solid var(--eg);box-shadow:0 20px 60px rgba(0,0,0,.7);cursor:grab;user-select:none;touch-action:none;}
+.scard:active{cursor:grabbing;}
+.cphoto{width:100%;height:300px;object-fit:cover;display:block;}
+.cphoto-ph{width:100%;height:300px;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,90,26,.2);}
+.cgrad{position:absolute;bottom:110px;left:0;right:0;height:140px;background:linear-gradient(transparent,rgba(13,13,20,.95));pointer-events:none;}
+.cinfo{position:absolute;bottom:0;left:0;right:0;padding:12px 16px 14px;background:var(--cd);}
+.cname{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:#fff;line-height:1;margin-bottom:3px;}
+.cbar{font-size:12px;color:var(--gn);font-weight:500;margin-bottom:5px;}
+.cvibe{font-size:11px;font-weight:300;color:var(--mu);line-height:1.5;font-style:italic;}
+.stamp{position:absolute;top:36px;font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:3px;border:4px solid;border-radius:4px;padding:2px 12px;opacity:0;pointer-events:none;}
+.sl{left:16px;color:var(--gn);border-color:var(--gn);transform:rotate(-15deg);}
+.sn{right:16px;color:#f44;border-color:#f44;transform:rotate(15deg);}
+.sact{display:flex;justify-content:center;gap:24px;padding:0 16px 6px;}
+.abtn{width:56px;height:56px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--cd);transition:transform .15s;font-size:22px;}
+.abtn:hover{transform:scale(1.08);}
+.abtn:active{transform:scale(.93);}
+.an{border-color:#f44;color:#f44;}
+.al{border-color:var(--gn);color:var(--gn);}
+.shint{text-align:center;font-size:10px;color:var(--dm);letter-spacing:.06em;padding-bottom:6px;}
+.dempty{display:none;text-align:center;padding:50px 24px;}
+.dempty.show{display:block;}
 
-/* ── FORMS ── */
-.form-wrap { padding:0 16px 24px; }
-.form-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:2px; color:var(--text); margin-bottom:6px; }
-.form-sub { font-size:13px; font-weight:300; color:var(--muted); line-height:1.6; margin-bottom:20px; }
-.field { margin-bottom:14px; }
-.flabel { font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; display:flex; align-items:center; gap:6px; transition:color 0.2s; }
-.field:focus-within .flabel { color:var(--orange); }
-.ptag { font-size:9px; color:#2a2a3a; background:#1a1a2a; padding:1px 6px; border-radius:10px; letter-spacing:0.05em; text-transform:none; font-weight:400; }
-input,textarea { width:100%; background:#0f0f1a; border:1px solid #2a2a3a; border-radius:8px; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; color:var(--text); outline:none; -webkit-appearance:none; caret-color:var(--orange); transition:border-color 0.2s,box-shadow 0.2s; resize:none; }
-input::placeholder,textarea::placeholder { color:#333; font-style:italic; }
-input:focus,textarea:focus { border-color:rgba(255,90,26,0.5); box-shadow:0 0 0 3px rgba(255,90,26,0.1); }
-input.err,textarea.err { border-color:rgba(255,64,64,0.5); box-shadow:0 0 0 3px rgba(255,64,64,0.08); }
-.errmsg { display:none; font-size:11px; color:#ff6464; margin-top:5px; padding-left:4px; }
-.errmsg.show { display:block; }
-.char-count { font-size:10px; color:var(--dim); text-align:right; margin-top:4px; }
+/* FORMS */
+.fwrap{padding:0 16px 24px;}
+.ftitle{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--tx);margin-bottom:6px;}
+.fsub{font-size:13px;font-weight:300;color:var(--mu);line-height:1.6;margin-bottom:20px;}
+.fld{margin-bottom:14px;}
+.flbl{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--dm);margin-bottom:6px;display:flex;align-items:center;gap:6px;transition:color .2s;}
+.fld:focus-within .flbl{color:var(--or);}
+.ptag{font-size:9px;color:#2a2a3a;background:#1a1a2a;padding:1px 6px;border-radius:10px;letter-spacing:.05em;text-transform:none;font-weight:400;}
+input,textarea{width:100%;background:#0f0f1a;border:1px solid #2a2a3a;border-radius:8px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;color:var(--tx);outline:none;-webkit-appearance:none;caret-color:var(--or);transition:border-color .2s,box-shadow .2s;resize:none;}
+input::placeholder,textarea::placeholder{color:#333;font-style:italic;}
+input:focus,textarea:focus{border-color:rgba(255,90,26,.5);box-shadow:0 0 0 3px rgba(255,90,26,.1);}
+input.err,textarea.err{border-color:rgba(255,64,64,.5);box-shadow:0 0 0 3px rgba(255,64,64,.08);}
+.errmsg{display:none;font-size:11px;color:#f66;margin-top:5px;padding-left:4px;}
+.errmsg.show{display:block;}
+.chcnt{font-size:10px;color:var(--dm);text-align:right;margin-top:4px;}
 
-/* Photo upload */
-.photo-zone { width:100%; height:160px; border:1.5px dashed #2a2a3a; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-bottom:16px; position:relative; overflow:hidden; transition:border-color 0.2s; background:#0f0f1a; }
-.photo-zone:hover { border-color:rgba(255,90,26,0.4); }
-.photo-zone.has-photo { border-color:rgba(255,90,26,0.5); }
-.pz-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none; }
-.pz-img.show { display:block; }
-.pz-overlay { position:absolute; inset:0; background:rgba(13,13,20,0.7); display:none; align-items:center; justify-content:center; flex-direction:column; gap:4px; }
-.photo-zone.has-photo .pz-overlay { display:flex; }
-#photo-input { display:none; }
-.upload-prog { display:none; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-bottom:12px; }
-.upload-prog.show { display:flex; }
+/* PHOTO UPLOAD */
+.pzone{width:100%;height:160px;border:1.5px dashed #2a2a3a;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-bottom:16px;position:relative;overflow:hidden;transition:border-color .2s;background:#0f0f1a;}
+.pzone:hover{border-color:rgba(255,90,26,.4);}
+.pzone.hp{border-color:rgba(255,90,26,.5);}
+.pzimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
+.pzimg.show{display:block;}
+.pzov{position:absolute;inset:0;background:rgba(13,13,20,.7);display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;}
+.pzone.hp .pzov{display:flex;}
+.uprog{display:none;align-items:center;gap:8px;font-size:12px;color:var(--mu);margin-bottom:12px;}
+.uprog.show{display:flex;}
 
-/* Buttons */
-.btn-or { width:100%; padding:13px; background:linear-gradient(135deg,var(--orange) 0%,#c04000 100%); border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:#fff; cursor:pointer; position:relative; overflow:hidden; transition:transform 0.15s,box-shadow 0.15s; box-shadow:0 4px 20px rgba(255,90,26,0.25); margin-top:6px; }
-.btn-or::before { content:''; position:absolute; inset:0; background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.15) 50%,transparent 70%); transform:translateX(-120%); transition:transform 0.5s; }
-.btn-or:hover:not(:disabled)::before { transform:translateX(120%); }
-.btn-or:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,90,26,0.4); }
-.btn-or:disabled { opacity:0.6; cursor:not-allowed; }
-.btn-gn { width:100%; padding:13px; background:linear-gradient(135deg,var(--green) 0%,#009944 100%); border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:#0d0d14; cursor:pointer; transition:transform 0.15s,box-shadow 0.15s; box-shadow:0 4px 20px rgba(0,230,118,0.2); margin-top:6px; }
-.btn-gn:hover:not(:disabled) { transform:translateY(-2px); }
-.btn-gn:disabled { opacity:0.6; cursor:not-allowed; }
-.btn-outline { width:100%; padding:12px; background:transparent; border:1.5px solid var(--edge); border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1.5px; color:var(--muted); cursor:pointer; transition:border-color 0.2s,color 0.2s; margin-top:8px; }
-.btn-outline:hover { border-color:var(--orange); color:var(--orange); }
-.btn-inner { display:flex; align-items:center; justify-content:center; gap:8px; position:relative; z-index:1; }
-.spinner { width:14px; height:14px; border:2px solid rgba(255,255,255,0.2); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+/* BUTTONS */
+.bor{width:100%;padding:13px;background:linear-gradient(135deg,var(--or) 0%,#c04000 100%);border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#fff;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(255,90,26,.25);margin-top:6px;}
+.bor:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,90,26,.4);}
+.bor:disabled{opacity:.6;cursor:not-allowed;}
+.bgn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gn) 0%,#009944 100%);border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#0d0d14;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(0,230,118,.2);margin-top:6px;}
+.bbl{width:100%;padding:13px;background:linear-gradient(135deg,var(--bl) 0%,#0080aa 100%);border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#0d0d14;cursor:pointer;transition:transform .15s;box-shadow:0 4px 20px rgba(64,196,255,.2);margin-top:6px;}
+.bout{width:100%;padding:12px;background:transparent;border:1.5px solid var(--eg);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1.5px;color:var(--mu);cursor:pointer;transition:border-color .2s,color .2s;margin-top:8px;}
+.bout:hover{border-color:var(--or);color:var(--or);}
+.binn{display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:1;}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Success */
-.success-state { display:none; text-align:center; padding:32px 24px; animation:fade-up 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-.success-state.show { display:block; }
-@keyframes fade-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.sring { width:68px; height:68px; border-radius:50%; border:1.5px solid rgba(0,230,118,0.5); display:flex; align-items:center; justify-content:center; margin:0 auto 22px; animation:ring-pulse 2.5s ease infinite; }
-@keyframes ring-pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,0.25)}50%{box-shadow:0 0 0 14px rgba(0,230,118,0)}}
-.check-path { stroke-dasharray:26; stroke-dashoffset:26; animation:draw-check 0.55s ease 0.3s forwards; }
-@keyframes draw-check{to{stroke-dashoffset:0}}
-.stitle { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:var(--text); margin-bottom:10px; }
-.stitle span { color:var(--green); }
-.sbody { font-size:13px; font-weight:300; color:var(--muted); line-height:1.7; margin-bottom:24px; }
-.badge-row { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
-.badge { display:flex; align-items:center; gap:5px; padding:6px 12px; border:1px solid var(--edge); border-radius:20px; font-size:11px; color:var(--muted); background:rgba(255,255,255,0.02); }
-.bdot { width:5px; height:5px; border-radius:50%; background:var(--orange); animation:dot-pulse 2s ease infinite; }
-@keyframes dot-pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+/* SUCCESS */
+.succ{display:none;text-align:center;padding:32px 24px;animation:fup .6s cubic-bezier(.22,1,.36,1) both;}
+.succ.show{display:block;}
+@keyframes fup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sring{width:68px;height:68px;border-radius:50%;border:1.5px solid rgba(0,230,118,.5);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:rp 2.5s ease infinite;}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.25)}50%{box-shadow:0 0 0 14px rgba(0,230,118,0)}}
+.chk{stroke-dasharray:26;stroke-dashoffset:26;animation:dc .55s ease .3s forwards;}
+@keyframes dc{to{stroke-dashoffset:0}}
+.st{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--tx);margin-bottom:10px;}
+.st span{color:var(--gn);}
+.sb{font-size:13px;font-weight:300;color:var(--mu);line-height:1.7;margin-bottom:24px;}
+.brow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.bdg{display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid var(--eg);border-radius:20px;font-size:11px;color:var(--mu);background:rgba(255,255,255,.02);}
+.bdt{width:5px;height:5px;border-radius:50%;background:var(--or);animation:dp 2s ease infinite;}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* Profile cards */
-.prof-card { background:var(--card); border:1px solid var(--edge); border-radius:12px; overflow:hidden; margin-bottom:14px; }
-.prof-photo { width:100%; height:200px; object-fit:cover; display:block; }
-.prof-placeholder { width:100%; height:200px; background:linear-gradient(135deg,#0f0f1a,#1a1a2e); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:60px; color:rgba(255,90,26,0.2); }
-.prof-info { padding:14px 16px; }
-.prof-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; color:var(--text); margin-bottom:3px; }
-.prof-bar { font-size:12px; color:var(--green); font-weight:500; margin-bottom:6px; }
-.prof-vibe { font-size:12px; font-weight:300; color:var(--muted); font-style:italic; line-height:1.5; }
-.stat-row { display:flex; gap:10px; margin-bottom:14px; }
-.stat-card { flex:1; background:var(--card); border:1px solid var(--edge); border-radius:10px; padding:12px; text-align:center; }
-.stat-num { font-family:'Bebas Neue',sans-serif; font-size:26px; line-height:1; margin-bottom:4px; }
-.stat-lbl { font-size:9px; color:var(--muted); letter-spacing:0.5px; text-transform:uppercase; font-weight:600; }
-.info-card { background:var(--card); border:1px solid var(--edge); border-radius:10px; padding:14px; margin-bottom:12px; }
-.irow { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--edge); font-size:13px; }
-.irow:last-child { border-bottom:none; }
-.ilbl { color:var(--muted); font-size:11px; }
-.ival { color:var(--text); font-weight:500; }
+/* PROFILE CARDS */
+.pcard{background:var(--cd);border:1px solid var(--eg);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.pphoto{width:100%;height:200px;object-fit:cover;display:block;}
+.pph{width:100%;height:200px;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:60px;color:rgba(255,90,26,.2);}
+.pinfo{padding:14px 16px;}
+.pnm{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--tx);margin-bottom:3px;}
+.pbr{font-size:12px;color:var(--gn);font-weight:500;margin-bottom:6px;}
+.pvb{font-size:12px;font-weight:300;color:var(--mu);font-style:italic;line-height:1.5;}
+.srow{display:flex;gap:10px;margin-bottom:14px;}
+.scrd{flex:1;background:var(--cd);border:1px solid var(--eg);border-radius:10px;padding:12px;text-align:center;}
+.snum{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;margin-bottom:4px;}
+.slbl{font-size:9px;color:var(--mu);letter-spacing:.5px;text-transform:uppercase;font-weight:600;}
+.icard{background:var(--cd);border:1px solid var(--eg);border-radius:10px;padding:14px;margin-bottom:12px;}
+.irow{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--eg);font-size:13px;}
+.irow:last-child{border-bottom:none;}
+.ilbl{color:var(--mu);font-size:11px;}
+.ival{color:var(--tx);font-weight:500;}
 
-/* PIN screen */
-.pin-wrap { padding:32px 24px; text-align:center; }
-.pin-icon { font-size:44px; margin-bottom:16px; }
-.pin-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--text); margin-bottom:8px; }
-.pin-sub { font-size:13px; color:var(--muted); margin-bottom:24px; line-height:1.6; }
-.pin-input { width:100%; background:#0f0f1a; border:1px solid #2a2a3a; border-radius:8px; padding:14px; font-family:'DM Sans',sans-serif; font-size:24px; font-weight:300; color:var(--text); outline:none; text-align:center; letter-spacing:8px; caret-color:var(--orange); transition:border-color 0.2s,box-shadow 0.2s; -webkit-appearance:none; }
-.pin-input:focus { border-color:rgba(255,90,26,0.5); box-shadow:0 0 0 3px rgba(255,90,26,0.1); }
-.pin-error { font-size:12px; color:#ff6464; margin-top:8px; display:none; }
-.pin-error.show { display:block; }
+/* PIN */
+.pinwrap{padding:32px 24px;text-align:center;}
+.pinico{font-size:44px;margin-bottom:16px;}
+.pintitle{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--tx);margin-bottom:8px;}
+.pinsub{font-size:13px;color:var(--mu);margin-bottom:24px;line-height:1.6;}
+.pininp{width:100%;background:#0f0f1a;border:1px solid #2a2a3a;border-radius:8px;padding:14px;font-family:'DM Sans',sans-serif;font-size:24px;font-weight:300;color:var(--tx);outline:none;text-align:center;letter-spacing:8px;caret-color:var(--or);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;}
+.pininp:focus{border-color:rgba(255,90,26,.5);box-shadow:0 0 0 3px rgba(255,90,26,.1);}
+.pinerr{font-size:12px;color:#f66;margin-top:8px;display:none;}
+.pinerr.show{display:block;}
 
-/* Request cards */
-.req-card { background:var(--card); border:1px solid var(--edge); border-radius:10px; padding:14px; margin-bottom:10px; }
-.req-row { display:flex; align-items:center; gap:12px; }
-.req-avatar { width:44px; height:44px; border-radius:50%; background:rgba(255,90,26,0.1); border:1px solid rgba(255,90,26,0.2); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--orange); flex-shrink:0; }
-.req-info { flex:1; }
-.req-name { font-size:14px; font-weight:600; color:var(--text); margin-bottom:2px; }
-.req-detail { font-size:11px; color:var(--muted); }
-.req-actions { display:flex; gap:8px; margin-top:10px; }
-.req-approve { flex:1; padding:8px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:1px; color:var(--green); cursor:pointer; }
-.req-deny { flex:1; padding:8px; background:rgba(255,64,64,0.08); border:1px solid rgba(255,64,64,0.25); border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:1px; color:#ff6464; cursor:pointer; }
-.req-status { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:20px; }
-.req-approved { background:rgba(0,230,118,0.1); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
-.req-denied { background:rgba(255,64,64,0.08); color:#ff6464; border:1px solid rgba(255,64,64,0.25); }
+/* REQUEST CARDS */
+.rcard{background:var(--cd);border:1px solid var(--eg);border-radius:10px;padding:14px;margin-bottom:10px;}
+.rrow{display:flex;align-items:center;gap:12px;}
+.rav{width:44px;height:44px;border-radius:50%;background:rgba(255,90,26,.1);border:1px solid rgba(255,90,26,.2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--or);flex-shrink:0;}
+.rnm{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:2px;}
+.rdt{font-size:11px;color:var(--mu);}
+.racts{display:flex;gap:8px;margin-top:10px;}
+.rappr{flex:1;padding:8px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--gn);cursor:pointer;}
+.rdeny{flex:1;padding:8px;background:rgba(255,64,64,.08);border:1px solid rgba(255,64,64,.25);border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:#f66;cursor:pointer;}
+.rst{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:20px;}
+.rapst{background:rgba(0,230,118,.1);color:var(--gn);border:1px solid rgba(0,230,118,.3);}
+.rdnst{background:rgba(255,64,64,.08);color:#f66;border:1px solid rgba(255,64,64,.25);}
 
-/* Divider */
-.div { display:flex; align-items:center; gap:12px; margin:16px 0 14px; }
-.div-line { flex:1; height:1px; background:var(--edge); }
-.div-dot { width:4px; height:4px; border-radius:50%; background:var(--orange); opacity:0.5; }
+/* ADMIN TABS */
+.atab{flex:1;padding:8px 4px;background:transparent;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.atab.on{color:var(--or);border-bottom-color:var(--or);}
 
-/* Toast */
-.toast { position:fixed; bottom:calc(var(--nb-h) + 14px); left:50%; transform:translateX(-50%) translateY(10px); background:rgba(0,230,118,0.12); border:1px solid rgba(0,230,118,0.3); color:var(--green); font-size:13px; font-weight:500; padding:9px 20px; border-radius:100px; opacity:0; transition:opacity 0.25s,transform 0.25s; pointer-events:none; z-index:200; white-space:nowrap; }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-.toast.orange { background:rgba(255,90,26,0.12); border-color:rgba(255,90,26,0.3); color:var(--orange); }
+/* DIVIDER */
+.divr{display:flex;align-items:center;gap:12px;margin:16px 0 14px;}
+.dl{flex:1;height:1px;background:var(--eg);}
+.dd{width:4px;height:4px;border-radius:50%;background:var(--or);opacity:.5;}
 
-/* Role selector */
-.role-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100vh - var(--nb-h)); padding:32px 24px; text-align:center; }
-.role-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:var(--text); margin-bottom:6px; }
-.role-title span { color:var(--orange); }
-.role-sub { font-size:13px; color:var(--muted); margin-bottom:32px; line-height:1.6; }
-.role-btn { width:100%; max-width:320px; padding:18px; border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; cursor:pointer; margin-bottom:14px; border:2px solid; transition:transform 0.15s,box-shadow 0.15s; background:transparent; }
-.role-btn:hover { transform:translateY(-2px); }
-.role-tender { border-color:var(--orange); color:var(--orange); }
-.role-tender:hover { background:rgba(255,90,26,0.08); box-shadow:0 8px 28px rgba(255,90,26,0.2); }
-.role-patron { border-color:var(--blue); color:var(--blue); }
-.role-patron:hover { background:rgba(64,196,255,0.08); box-shadow:0 8px 28px rgba(64,196,255,0.2); }
-.role-tag { font-size:11px; font-weight:400; letter-spacing:0.05em; color:var(--muted); margin-top:4px; font-family:'DM Sans',sans-serif; }
+/* LOADING */
+.ldst{text-align:center;padding:60px 24px;}
+.ldsp{width:28px;height:28px;border:3px solid var(--eg);border-top-color:var(--or);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+.ldtx{font-size:13px;color:var(--mu);}
 
-.admin-tab { flex:1; padding:8px 4px; background:transparent; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:color 0.2s,border-color 0.2s; }
-.active-admin-tab { color:var(--orange); border-bottom-color:var(--orange); }
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--nb) + 14px);left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.3);color:var(--gn);font-size:13px;font-weight:500;padding:9px 20px;border-radius:100px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:200;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.or{background:rgba(255,90,26,.12);border-color:rgba(255,90,26,.3);color:var(--or);}
 
-/* Loading */
-.loading-state { text-align:center; padding:80px 24px; }
-.loading-spinner { width:32px; height:32px; border:3px solid var(--edge); border-top-color:var(--orange); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
-.loading-text { font-size:13px; color:var(--muted); letter-spacing:0.05em; }
+/* LANDING */
+.landwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;text-align:center;}
+.rtitle{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--tx);margin-bottom:6px;}
+.rtitle span{color:var(--or);}
+.rsub{font-size:13px;color:var(--mu);margin-bottom:32px;line-height:1.6;}
+.rbtn{width:100%;max-width:320px;padding:18px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;margin-bottom:14px;border:2px solid;transition:transform .15s,box-shadow .15s;background:transparent;}
+.rbtn:hover{transform:translateY(-2px);}
+.rtag{font-size:11px;font-weight:400;letter-spacing:.05em;color:var(--mu);margin-top:4px;font-family:'DM Sans',sans-serif;}
+.rt{border-color:var(--or);color:var(--or);}
+.rt:hover{background:rgba(255,90,26,.08);box-shadow:0 8px 28px rgba(255,90,26,.2);}
+.rp{border-color:var(--bl);color:var(--bl);}
+.rp:hover{background:rgba(64,196,255,.08);box-shadow:0 8px 28px rgba(64,196,255,.2);}
+.ra{border-color:var(--dm);color:var(--mu);max-width:320px;width:100%;padding:12px;margin-top:4px;}
+.ra:hover{border-color:var(--or);color:var(--or);}
 </style>
 </head>
 <body>
 
-<!-- ══════════ LANDING / ROLE SELECT ══════════ -->
+<!-- LANDING -->
 <div class="screen active" id="screen-landing">
-  <div class="role-wrap">
+  <div class="landwrap">
     <div style="margin-bottom:28px;">
       <svg width="48" height="48" viewBox="0 0 32 32" fill="none" style="display:block;margin:0 auto 12px;">
         <path d="M9 5l2.5 12L16 22l4.5-5L23 5H9z" stroke="#ff5a1a" stroke-width="1.3" stroke-linejoin="round" fill="none"/>
         <path d="M13 22v4M19 22v4M11 26h10" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/>
         <path d="M9 5h14" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/>
       </svg>
-      <div class="app-name" style="display:block;text-align:center;">mytenderapp</div>
+      <div class="appname" style="display:block;text-align:center;">mytenderapp</div>
     </div>
-    <div class="role-title">Welcome.<br>Who are <span>you?</span></div>
-    <div class="role-sub">Tell us who you are so we can give you the right experience.</div>
-    <button class="role-btn role-tender" onclick="setRole('tender')">
+    <div class="rtitle">Welcome.<br>Who are <span>you?</span></div>
+    <div class="rsub">Tell us who you are so we can give you the right experience.</div>
+    <button class="rbtn rt" onclick="setRole('tender')">
       🍸 I'm a Bartender
-      <div class="role-tag">Create a profile · Build your following</div>
+      <div class="rtag">Create a profile · Build your following</div>
     </button>
-    <button class="role-btn role-patron" onclick="setRole('patron')">
+    <button class="rbtn rp" onclick="setRole('patron')">
       👀 I'm a Patron
-      <div class="role-tag">Discover bartenders · Send follow requests</div>
+      <div class="rtag">Discover bartenders · Send follow requests</div>
     </button>
-    <button class="role-btn" onclick="goToAdmin()" style="border-color:var(--dim);color:var(--muted);max-width:320px;width:100%;padding:12px;margin-top:8px;">
+    <button class="rbtn ra" onclick="goAdmin()">
       ⚙️ Admin Access
-      <div class="role-tag">Partners only</div>
+      <div class="rtag">Partners only</div>
     </button>
   </div>
 </div>
 
-<!-- ══════════ TENDER: CREATE PROFILE ══════════ -->
+<!-- TENDER CREATE -->
 <div class="screen" id="screen-tender-create">
-  <div class="sbar"><span id="clk1">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="scr-hdr"><div class="scr-title">CREATE TENDER PROFILE</div><span style="font-size:10px;color:var(--muted);">Founding Tender</span></div>
-  <div class="form-wrap">
-    <div id="tender-form-view">
-      <div class="form-sub">Your photo, name, establishment &amp; vibe will be public. Everything else stays private.</div>
-      <form id="tender-form" novalidate>
-        <div class="field">
-          <div class="flabel">Profile Photo</div>
-          <div class="photo-zone" id="pzone" onclick="document.getElementById('photo-input').click()">
-            <img id="ppreview" class="pz-img" alt="Preview">
-            <div class="pz-overlay"><i class="ti ti-camera" style="font-size:20px;color:var(--orange);"></i><span style="font-size:11px;color:var(--orange);">Change Photo</span></div>
-            <i class="ti ti-camera-plus" style="font-size:26px;color:var(--orange);opacity:0.5;"></i>
-            <span style="font-size:12px;color:var(--muted);">Tap to upload your photo</span>
-            <span style="font-size:10px;color:var(--dim);">JPG or PNG · Square works best</span>
+  <div class="sbar"><span id="c1">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="shdr"><div class="stitle">CREATE TENDER PROFILE</div><span style="font-size:10px;color:var(--mu);">Founding Tender</span></div>
+  <div class="fwrap">
+    <div id="tform-view">
+      <div class="fsub">Your photo, name, establishment &amp; vibe will be public. Everything else stays private.</div>
+      <form id="tform" novalidate>
+        <div class="fld">
+          <div class="flbl">Profile Photo</div>
+          <div class="pzone" id="tpzone" onclick="document.getElementById('tphoto').click()">
+            <img id="tpimg" class="pzimg" alt="">
+            <div class="pzov"><i class="ti ti-camera" style="font-size:20px;color:var(--or);"></i><span style="font-size:11px;color:var(--or);">Change Photo</span></div>
+            <i class="ti ti-camera-plus" style="font-size:26px;color:var(--or);opacity:.5;"></i>
+            <span style="font-size:12px;color:var(--mu);">Tap to upload your photo</span>
           </div>
-          <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
-          <div class="upload-prog" id="uprog"><div class="spinner" style="border-top-color:var(--orange);border-color:rgba(255,90,26,0.15);"></div><span style="font-size:12px;color:var(--muted);">Uploading…</span></div>
+          <input type="file" id="tphoto" accept="image/*" onchange="uploadPhoto(event,'t')">
+          <div class="uprog" id="tuprog"><div class="spin" style="border-top-color:var(--or);border-color:rgba(255,90,26,.15);"></div><span style="font-size:12px;color:var(--mu);">Uploading…</span></div>
         </div>
-        <div class="field"><div class="flabel">Full Name</div><input id="t-name" type="text" autocomplete="name" placeholder="Your name behind the bar"><div class="errmsg" id="et-name">Please enter your name.</div></div>
-        <div class="field"><div class="flabel">Phone Number <span class="ptag">private</span></div><input id="t-phone" type="tel" autocomplete="tel" placeholder="+1 (312) 000-0000"><div class="errmsg" id="et-phone">Please enter a valid phone number.</div></div>
-        <div class="field"><div class="flabel">Email Address <span class="ptag">private</span></div><input id="t-email" type="email" autocomplete="email" placeholder="you@example.com"><div class="errmsg" id="et-email">Please enter a valid email.</div></div>
-        <div class="field"><div class="flabel">Current Establishment</div><input id="t-est" type="text" autocomplete="organization" placeholder="Where are you currently pouring?"><div class="errmsg" id="et-est">Let us know where you're pouring.</div></div>
-        <div class="field"><div class="flabel">Your Vibe</div><textarea id="t-vibe" rows="3" maxlength="120" placeholder="Who are you behind the bar? Make it yours…" oninput="document.getElementById('vct').textContent=this.value.length"></textarea><div class="char-count"><span id="vct">0</span>/120</div><div class="errmsg" id="et-vibe">Give us a taste of your vibe.</div></div>
-        <button type="submit" class="btn-or" id="t-submit"><div class="btn-inner" id="t-btn-inner"><i class="ti ti-rocket"></i><span>Go Live — Create My Profile</span></div></button>
-        <p style="text-align:center;font-size:10px;color:var(--dim);margin-top:12px;line-height:1.5;">No spam. Your contact info is never shared.</p>
+        <div class="fld"><div class="flbl">Full Name</div><input id="tn" type="text" autocomplete="name" placeholder="Your name behind the bar"><div class="errmsg" id="etn">Please enter your name.</div></div>
+        <div class="fld"><div class="flbl">Phone <span class="ptag">private</span></div><input id="tph" type="tel" autocomplete="tel" placeholder="+1 (312) 000-0000"><div class="errmsg" id="etph">Please enter a valid phone number.</div></div>
+        <div class="fld"><div class="flbl">Email <span class="ptag">private</span></div><input id="tem" type="email" autocomplete="email" placeholder="you@example.com"><div class="errmsg" id="etem">Please enter a valid email.</div></div>
+        <div class="fld"><div class="flbl">Establishment</div><input id="tes" type="text" autocomplete="organization" placeholder="Where are you currently pouring?"><div class="errmsg" id="etes">Let us know where you're pouring.</div></div>
+        <div class="fld"><div class="flbl">Your Vibe</div><textarea id="tvi" rows="3" maxlength="120" placeholder="Who are you behind the bar?" oninput="document.getElementById('vct').textContent=this.value.length"></textarea><div class="chcnt"><span id="vct">0</span>/120</div><div class="errmsg" id="etvi">Give us a taste of your vibe.</div></div>
+        <button type="submit" class="bor" id="tsub"><div class="binn" id="tbinn"><i class="ti ti-rocket"></i><span>Go Live — Create My Profile</span></div></button>
+        <p style="text-align:center;font-size:10px;color:var(--dm);margin-top:12px;">No spam. Your contact info is never shared.</p>
       </form>
     </div>
-    <div class="success-state" id="tender-success">
-      <div class="sring"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path class="check-path" d="M7 14.5l5.5 5.5 8.5-9.5" stroke="#00e676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="stitle">YOU'RE <span>LIVE</span>, <span id="t-success-name">TENDER</span>.</div>
-      <p class="sbody">Your profile is out there. Patrons can now discover you and send follow requests. This is your brand — own it.</p>
-      <div class="badge-row">
-        <div class="badge"><span class="bdot"></span>Profile Live</div>
-        <div class="badge"><span class="bdot" style="animation-delay:0.5s;background:var(--green);"></span>Discoverable</div>
-        <div class="badge"><span class="bdot" style="animation-delay:1s;"></span>Founding Tender</div>
-      </div>
-      <button class="btn-or" onclick="switchScreen('discover')" style="max-width:260px;margin:0 auto;"><div class="btn-inner"><i class="ti ti-cards"></i><span>See The Discover Deck</span></div></button>
-      <button class="btn-outline" onclick="switchScreen('tender-dashboard')" style="max-width:260px;margin:8px auto 0;display:block;">VIEW MY DASHBOARD</button>
+    <div class="succ" id="tsucc">
+      <div class="sring"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path class="chk" d="M7 14.5l5.5 5.5 8.5-9.5" stroke="#00e676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="st">YOU'RE <span>LIVE</span>, <span id="tsname">TENDER</span>.</div>
+      <p class="sb">Your profile is out there. Patrons can now discover you and send follow requests.</p>
+      <div class="brow"><div class="bdg"><span class="bdt"></span>Profile Live</div><div class="bdg"><span class="bdt" style="animation-delay:.5s;background:var(--gn);"></span>Discoverable</div></div>
+      <button class="bor" onclick="go('discover')" style="max-width:260px;margin:0 auto;"><div class="binn"><i class="ti ti-cards"></i><span>See The Discover Deck</span></div></button>
+      <button class="bout" onclick="go('tender-dash')" style="max-width:260px;margin:8px auto 0;display:block;">VIEW MY DASHBOARD</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ PATRON: CREATE PROFILE ══════════ -->
+<!-- PATRON CREATE -->
 <div class="screen" id="screen-patron-create">
-  <div class="sbar"><span id="clk2">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="scr-hdr"><div class="scr-title" style="color:var(--blue);">CREATE YOUR PROFILE</div></div>
-  <div class="form-wrap">
-    <div id="patron-form-view">
-      <div class="form-sub">Create your profile to start discovering and following your favorite bartenders.</div>
-      <form id="patron-form" novalidate>
-        <div class="field">
-          <div class="flabel" style="color:var(--blue);">Profile Photo</div>
-          <div class="photo-zone" id="pzone-patron" onclick="document.getElementById('photo-input-patron').click()">
-            <img id="ppreview-patron" class="pz-img" alt="Preview">
-            <div class="pz-overlay"><i class="ti ti-camera" style="font-size:20px;color:var(--blue);"></i><span style="font-size:11px;color:var(--blue);">Change Photo</span></div>
-            <i class="ti ti-camera-plus" style="font-size:26px;color:var(--blue);opacity:0.5;"></i>
-            <span style="font-size:12px;color:var(--muted);">Tap to upload your photo</span>
-            <span style="font-size:10px;color:var(--dim);">So tenders know who you are</span>
+  <div class="sbar"><span id="c2">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="shdr"><div class="stitle" style="color:var(--bl);">CREATE YOUR PROFILE</div></div>
+  <div class="fwrap">
+    <div id="pform-view">
+      <div class="fsub">Create your profile to start discovering and following your favorite bartenders.</div>
+      <form id="pform" novalidate>
+        <div class="fld">
+          <div class="flbl" style="color:var(--bl);">Profile Photo</div>
+          <div class="pzone" id="ppzone" onclick="document.getElementById('pphoto').click()">
+            <img id="ppimg" class="pzimg" alt="">
+            <div class="pzov"><i class="ti ti-camera" style="font-size:20px;color:var(--bl);"></i><span style="font-size:11px;color:var(--bl);">Change Photo</span></div>
+            <i class="ti ti-camera-plus" style="font-size:26px;color:var(--bl);opacity:.5;"></i>
+            <span style="font-size:12px;color:var(--mu);">Tap to upload your photo</span>
+            <span style="font-size:10px;color:var(--dm);">So tenders know who you are</span>
           </div>
-          <input type="file" id="photo-input-patron" accept="image/*" onchange="handlePatronPhoto(event)">
-          <div class="upload-prog" id="uprog-patron"><div class="spinner" style="border-top-color:var(--blue);border-color:rgba(64,196,255,0.15);"></div><span style="font-size:12px;color:var(--muted);">Uploading…</span></div>
+          <input type="file" id="pphoto" accept="image/*" onchange="uploadPhoto(event,'p')">
+          <div class="uprog" id="puprog"><div class="spin" style="border-top-color:var(--bl);border-color:rgba(64,196,255,.15);"></div><span style="font-size:12px;color:var(--mu);">Uploading…</span></div>
         </div>
-        <div class="field"><div class="flabel" style="color:var(--blue);">First Name</div><input id="p-first" type="text" autocomplete="given-name" placeholder="First name"><div class="errmsg" id="ep-first">Please enter your first name.</div></div>
-        <div class="field"><div class="flabel" style="color:var(--blue);">Last Name</div><input id="p-last" type="text" autocomplete="family-name" placeholder="Last name"><div class="errmsg" id="ep-last">Please enter your last name.</div></div>
-        <div class="field"><div class="flabel" style="color:var(--blue);">Email Address</div><input id="p-email" type="email" autocomplete="email" placeholder="you@example.com"><div class="errmsg" id="ep-email">Please enter a valid email.</div></div>
-        <div class="field"><div class="flabel" style="color:var(--blue);">Phone Number</div><input id="p-phone" type="tel" autocomplete="tel" placeholder="+1 (312) 000-0000"><div class="errmsg" id="ep-phone">Please enter a valid phone number.</div></div>
-        <button type="submit" class="btn-or" id="p-submit" style="background:linear-gradient(135deg,var(--blue) 0%,#0080aa 100%);box-shadow:0 4px 20px rgba(64,196,255,0.2);">
-          <div class="btn-inner" id="p-btn-inner"><i class="ti ti-arrow-right"></i><span>Enter The App</span></div>
-        </button>
+        <div class="fld"><div class="flbl" style="color:var(--bl);">First Name</div><input id="pfn" type="text" autocomplete="given-name" placeholder="First name"><div class="errmsg" id="epfn">Please enter your first name.</div></div>
+        <div class="fld"><div class="flbl" style="color:var(--bl);">Last Name</div><input id="pln" type="text" autocomplete="family-name" placeholder="Last name"><div class="errmsg" id="epln">Please enter your last name.</div></div>
+        <div class="fld"><div class="flbl" style="color:var(--bl);">Email</div><input id="pem" type="email" autocomplete="email" placeholder="you@example.com"><div class="errmsg" id="epem">Please enter a valid email.</div></div>
+        <div class="fld"><div class="flbl" style="color:var(--bl);">Phone</div><input id="pph" type="tel" autocomplete="tel" placeholder="+1 (312) 000-0000"><div class="errmsg" id="epph">Please enter a valid phone number.</div></div>
+        <button type="submit" class="bbl" id="psub"><div class="binn" id="pbinn"><i class="ti ti-arrow-right"></i><span>Enter The App</span></div></button>
       </form>
     </div>
-    <div class="success-state" id="patron-success">
-      <div class="sring" style="border-color:rgba(64,196,255,0.5);"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path class="check-path" d="M7 14.5l5.5 5.5 8.5-9.5" stroke="#40c4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="stitle">WELCOME, <span style="color:var(--blue);" id="p-success-name">FRIEND</span>.</div>
-      <p class="sbody">You're in. Start discovering bartenders and swipe right to send a follow request. Tenders choose who they let in.</p>
-      <button class="btn-or" onclick="switchScreen('discover')" style="max-width:260px;margin:0 auto;background:linear-gradient(135deg,var(--blue) 0%,#0080aa 100%);box-shadow:0 4px 20px rgba(64,196,255,0.2);"><div class="btn-inner"><i class="ti ti-cards"></i><span>Start Discovering</span></div></button>
+    <div class="succ" id="psucc">
+      <div class="sring" style="border-color:rgba(64,196,255,.5);"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path class="chk" d="M7 14.5l5.5 5.5 8.5-9.5" stroke="#40c4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="st" style="color:var(--tx);">WELCOME, <span style="color:var(--bl);" id="psname">FRIEND</span>.</div>
+      <p class="sb">You're in. Start discovering bartenders and swipe right to send a follow request.</p>
+      <button class="bbl" onclick="go('discover')" style="max-width:260px;margin:0 auto;"><div class="binn"><i class="ti ti-cards"></i><span>Start Discovering</span></div></button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ DISCOVER / SWIPE DECK ══════════ -->
+<!-- DISCOVER -->
 <div class="screen" id="screen-discover">
-  <div class="sbar"><span id="clk3">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="deck-header">
-    <div class="logo-row"><svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M9 5l2.5 12L16 22l4.5-5L23 5H9z" stroke="#ff5a1a" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M13 22v4M19 22v4M11 26h10" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/><path d="M9 5h14" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/></svg><span class="app-name">mytenderapp</span></div>
-    <div class="live-chip"><span class="dot-live"></span><span id="tender-count">—</span> tenders</div>
+  <div class="sbar"><span id="c3">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="dhdr">
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px;">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M9 5l2.5 12L16 22l4.5-5L23 5H9z" stroke="#ff5a1a" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M13 22v4M19 22v4M11 26h10" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/><path d="M9 5h14" stroke="#ff5a1a" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span class="appname">mytenderapp</span>
+    </div>
+    <div class="chip"><span class="dot"></span><span id="tcnt">-</span> tenders</div>
   </div>
-  <div class="deck-counter" id="deck-counter"></div>
-  <div class="deck-wrap" id="deck-wrap">
-    <div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading Tenders…</div></div>
-  </div>
-  <div class="deck-empty" id="deck-empty">
-    <div style="font-size:40px;margin-bottom:14px;opacity:0.4;">🍸</div>
+  <div class="dctr" id="dctr"></div>
+  <div class="dwrap" id="dwrap"><div class="ldst"><div class="ldsp"></div><div class="ldtx">Loading Tenders…</div></div></div>
+  <div class="dempty" id="dempty">
+    <div style="font-size:40px;margin-bottom:14px;opacity:.4;">🍸</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#ccc;margin-bottom:8px;">YOU'VE SEEN EVERYONE</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">Check back — new Tenders join every day.</div>
-    <button class="btn-or" onclick="resetDeck()" style="max-width:220px;margin:0 auto 10px;display:block;"><div class="btn-inner"><span>See Them Again</span></div></button>
+    <div style="font-size:13px;color:var(--mu);margin-bottom:22px;">Check back — new Tenders join every day.</div>
+    <button class="bor" onclick="resetDeck()" style="max-width:220px;margin:0 auto;display:block;"><div class="binn"><span>See Them Again</span></div></button>
   </div>
-  <div class="swipe-actions" id="swipe-actions">
-    <button class="abtn abtn-nope" onclick="swipeCard('left')"><i class="ti ti-x"></i></button>
-    <button class="abtn abtn-like" onclick="swipeCard('right')"><i class="ti ti-heart"></i></button>
+  <div class="sact" id="sact">
+    <button class="abtn an" onclick="swipe('left')"><i class="ti ti-x"></i></button>
+    <button class="abtn al" onclick="swipe('right')"><i class="ti ti-heart"></i></button>
   </div>
-  <div class="swipe-hint" id="swipe-hint">← Pass &nbsp;|&nbsp; Like / Follow Request →</div>
+  <div class="shint" id="shint">← Pass &nbsp;|&nbsp; Like / Follow Request →</div>
 </div>
 
-<!-- ══════════ MY PROFILE ══════════ -->
+<!-- MY PROFILE -->
 <div class="screen" id="screen-myprofile">
-  <div class="sbar"><span id="clk4">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="scr-hdr"><div class="scr-title">MY PROFILE</div></div>
-  <div style="padding:0 16px 24px;" id="myprofile-wrap">
-    <div id="no-profile-msg" style="text-align:center;padding:60px 24px;">
-      <div style="font-size:44px;margin-bottom:14px;opacity:0.3;">🍸</div>
+  <div class="sbar"><span id="c4">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="shdr"><div class="stitle">MY PROFILE</div></div>
+  <div style="padding:0 16px 24px;">
+    <div id="noprof" style="text-align:center;padding:60px 24px;">
+      <div style="font-size:44px;margin-bottom:14px;opacity:.3;">🍸</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#ccc;margin-bottom:8px;">NO PROFILE YET</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">Go back and create your profile to appear in the discover deck.</div>
-      <button class="btn-or" onclick="switchScreen('landing')"><div class="btn-inner"><span>Get Started</span></div></button>
+      <div style="font-size:13px;color:var(--mu);margin-bottom:24px;">Go back and create your profile.</div>
+      <button class="bor" onclick="go('landing')"><div class="binn"><span>Get Started</span></div></button>
     </div>
-    <div id="my-profile-content" style="display:none;">
-      <div class="prof-card">
-        <img id="my-photo" class="prof-photo" style="display:none;" alt="My photo">
-        <div id="my-placeholder" class="prof-placeholder"></div>
-        <div class="prof-info">
-          <div class="prof-name" id="my-name">—</div>
-          <div class="prof-bar" id="my-bar">—</div>
-          <div class="prof-vibe" id="my-vibe" style="display:none;"></div>
+    <div id="myprofcont" style="display:none;">
+      <div class="pcard">
+        <img id="myphoto" class="pphoto" style="display:none;" alt="">
+        <div id="myph" class="pph"></div>
+        <div class="pinfo">
+          <div class="pnm" id="mynm">—</div>
+          <div class="pbr" id="mybr">—</div>
+          <div class="pvb" id="myvb" style="display:none;"></div>
         </div>
       </div>
-      <div class="stat-row">
-        <div class="stat-card"><div class="stat-num" style="color:var(--orange);" id="my-likes">0</div><div class="stat-lbl">Likes</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--green);">✓</div><div class="stat-lbl">Live</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--pink);" id="my-requests">0</div><div class="stat-lbl">Requests</div></div>
+      <div class="srow">
+        <div class="scrd"><div class="snum" style="color:var(--or);" id="mylk">0</div><div class="slbl">Likes</div></div>
+        <div class="scrd"><div class="snum" style="color:var(--gn);">✓</div><div class="slbl">Live</div></div>
+        <div class="scrd"><div class="snum" style="color:var(--pk);" id="myrq">0</div><div class="slbl">Requests</div></div>
       </div>
-      <div class="info-card">
-        <div style="font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Private Info</div>
-        <div class="irow"><span class="ilbl">Phone</span><span class="ival" id="my-phone">—</span></div>
-        <div class="irow"><span class="ilbl">Email</span><span class="ival" id="my-email">—</span></div>
+      <div class="icard">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);margin-bottom:8px;">Private Info</div>
+        <div class="irow"><span class="ilbl">Phone</span><span class="ival" id="myph2">—</span></div>
+        <div class="irow"><span class="ilbl">Email</span><span class="ival" id="myem">—</span></div>
       </div>
-      <div id="tender-dashboard-btn" style="display:none;">
-        <button class="btn-or" onclick="switchScreen('tender-dashboard')"><div class="btn-inner"><i class="ti ti-shield-lock"></i><span>Tender Dashboard</span></div></button>
-      </div>
+      <div id="dashlnk" style="display:none;"><button class="bor" onclick="go('tender-dash')"><div class="binn"><i class="ti ti-shield-lock"></i><span>Tender Dashboard</span></div></button></div>
     </div>
   </div>
 </div>
 
-<!-- ══════════ TENDER DASHBOARD (PIN PROTECTED) ══════════ -->
-<div class="screen" id="screen-tender-dashboard">
-  <div class="sbar"><span id="clk5">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="scr-hdr"><div class="scr-title" style="color:var(--pink);">TENDER DASHBOARD</div></div>
-
-  <!-- PIN Entry -->
-  <div id="pin-view" style="padding:0 16px 24px;">
-    <div class="pin-wrap">
-      <div class="pin-icon">🔐</div>
-      <div class="pin-title">ENTER YOUR PIN</div>
-      <div class="pin-sub">This dashboard is private. Enter your email and your Tender PIN to see who wants to follow you.</div>
-      <div class="field" style="margin-bottom:14px;text-align:left;">
-        <div class="flabel">Your Email</div>
-        <input id="pin-email" type="email" autocomplete="email" placeholder="your@email.com">
-      </div>
-      <div class="field" style="margin-bottom:14px;">
-        <div class="flabel">PIN</div>
-        <input class="pin-input" id="pin-input" type="number" maxlength="4" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)">
-        <div class="pin-error" id="pin-error">Incorrect email or PIN. Please try again.</div>
-      </div>
-      <button class="btn-or" onclick="checkPin()"><div class="btn-inner"><i class="ti ti-lock-open"></i><span>Access Dashboard</span></div></button>
+<!-- TENDER DASHBOARD -->
+<div class="screen" id="screen-tender-dash">
+  <div class="sbar"><span id="c5">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="shdr"><div class="stitle" style="color:var(--pk);">TENDER DASHBOARD</div></div>
+  <div id="tpin-view" style="padding:0 16px 24px;">
+    <div class="pinwrap">
+      <div class="pinico">🔐</div>
+      <div class="pintitle">ENTER YOUR PIN</div>
+      <div class="pinsub">Enter your email and Tender PIN to see who wants to follow you.</div>
+      <div class="fld" style="margin-bottom:14px;text-align:left;"><div class="flbl">Your Email</div><input id="tpin-em" type="email" placeholder="your@email.com"></div>
+      <div class="fld" style="margin-bottom:14px;"><div class="flbl">PIN</div><input class="pininp" id="tpin-in" type="number" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="tpin-err">Incorrect email or PIN.</div></div>
+      <button class="bor" onclick="checkTenderPin()"><div class="binn"><i class="ti ti-lock-open"></i><span>Access Dashboard</span></div></button>
     </div>
   </div>
-
-  <!-- Dashboard Content -->
-  <div id="dashboard-view" style="display:none;padding:0 16px 24px;">
-    <div style="margin-bottom:16px;">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Welcome back,</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--text);" id="dash-name">—</div>
-    </div>
-    <div class="stat-row">
-      <div class="stat-card"><div class="stat-num" style="color:var(--orange);" id="dash-likes">0</div><div class="stat-lbl">Likes</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--pink);" id="dash-pending">0</div><div class="stat-lbl">Pending</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--green);" id="dash-approved">0</div><div class="stat-lbl">Approved</div></div>
-    </div>
-    <div class="div"><div class="div-line"></div><div class="div-dot"></div><div class="div-line"></div></div>
-    <div style="font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">FOLLOW REQUESTS</div>
-    <div id="requests-list">
-      <div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading requests…</div></div>
-    </div>
-    <button class="btn-outline" onclick="lockDashboard()" style="margin-top:16px;">LOCK DASHBOARD</button>
+  <div id="tdash-view" style="display:none;padding:0 16px 24px;">
+    <div style="margin-bottom:16px;"><div style="font-size:13px;color:var(--mu);margin-bottom:4px;">Welcome back,</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;" id="dnm">—</div></div>
+    <div class="srow"><div class="scrd"><div class="snum" style="color:var(--or);" id="dlk">0</div><div class="slbl">Likes</div></div><div class="scrd"><div class="snum" style="color:var(--pk);" id="dpn">0</div><div class="slbl">Pending</div></div><div class="scrd"><div class="snum" style="color:var(--gn);" id="dap">0</div><div class="slbl">Approved</div></div></div>
+    <div class="divr"><div class="dl"></div><div class="dd"></div><div class="dl"></div></div>
+    <div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);margin-bottom:12px;">FOLLOW REQUESTS</div>
+    <div id="dreqs"><div class="ldst"><div class="ldsp"></div><div class="ldtx">Loading…</div></div></div>
+    <button class="bout" onclick="lockTender()" style="margin-top:16px;">LOCK DASHBOARD</button>
   </div>
 </div>
 
-<!-- ══════════ ADMIN DASHBOARD ══════════ -->
+<!-- ADMIN -->
 <div class="screen" id="screen-admin">
-  <div class="sbar"><span id="clk6">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
-  <div class="scr-hdr"><div class="scr-title" style="color:var(--orange);">ADMIN DASHBOARD</div><span style="font-size:10px;color:var(--muted);">MyTenderApp</span></div>
-  <div id="admin-pin-view" style="padding:0 16px 24px;">
-    <div class="pin-wrap">
-      <div class="pin-icon">&#128273;</div>
-      <div class="pin-title">ADMIN ACCESS</div>
-      <div class="pin-sub">Enter your admin email and PIN to access the full platform dashboard.</div>
-      <div class="field" style="margin-bottom:14px;text-align:left;"><div class="flabel">Admin Email</div><input id="admin-email" type="email" autocomplete="email" placeholder="your@email.com"></div>
-      <div class="field" style="margin-bottom:14px;"><div class="flabel">Admin PIN</div><input class="pin-input" id="admin-pin-input" type="number" placeholder="&#8226;&#8226;&#8226;&#8226;" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pin-error" id="admin-pin-error">Incorrect email or PIN.</div></div>
-      <button class="btn-or" onclick="checkAdminPin()"><div class="btn-inner"><i class="ti ti-shield-check"></i><span>Access Admin Dashboard</span></div></button>
+  <div class="sbar"><span id="c6">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div class="shdr"><div class="stitle" style="color:var(--or);">ADMIN DASHBOARD</div><span style="font-size:10px;color:var(--mu);">MyTenderApp</span></div>
+  <div id="apin-view" style="padding:0 16px 24px;">
+    <div class="pinwrap">
+      <div class="pinico">🔑</div>
+      <div class="pintitle">ADMIN ACCESS</div>
+      <div class="pinsub">Enter your admin email and PIN to access the full platform dashboard.</div>
+      <div class="fld" style="margin-bottom:14px;text-align:left;"><div class="flbl">Admin Email</div><input id="apin-em" type="email" placeholder="your@email.com"></div>
+      <div class="fld" style="margin-bottom:14px;"><div class="flbl">Admin PIN</div><input class="pininp" id="apin-in" type="number" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="apin-err">Incorrect email or PIN.</div></div>
+      <button class="bor" onclick="checkAdminPin()"><div class="binn"><i class="ti ti-shield-check"></i><span>Access Admin Dashboard</span></div></button>
     </div>
   </div>
-  <div id="admin-content" style="display:none;padding:0 16px 24px;">
-    <div class="stat-row" style="margin-bottom:14px;">
-      <div class="stat-card"><div class="stat-num" style="color:var(--orange);" id="admin-total-tenders">-</div><div class="stat-lbl">Tenders</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--blue);" id="admin-total-patrons">-</div><div class="stat-lbl">Patrons</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--green);" id="admin-total-requests">-</div><div class="stat-lbl">Requests</div></div>
+  <div id="adash-view" style="display:none;padding:0 16px 24px;">
+    <div class="srow"><div class="scrd"><div class="snum" style="color:var(--or);" id="a-tn">—</div><div class="slbl">Tenders</div></div><div class="scrd"><div class="snum" style="color:var(--bl);" id="a-pn">—</div><div class="slbl">Patrons</div></div><div class="scrd"><div class="snum" style="color:var(--gn);" id="a-rn">—</div><div class="slbl">Requests</div></div></div>
+    <div style="display:flex;border-bottom:1px solid var(--eg);margin-bottom:14px;">
+      <button class="atab on" id="at-t" onclick="aTab('t')">Tenders</button>
+      <button class="atab" id="at-p" onclick="aTab('p')">Patrons</button>
+      <button class="atab" id="at-r" onclick="aTab('r')">Requests</button>
     </div>
-    <div style="display:flex;border-bottom:1px solid var(--edge);margin-bottom:14px;">
-      <button class="admin-tab active-admin-tab" id="atab-tenders" onclick="switchAdminTab('tenders')">Tenders</button>
-      <button class="admin-tab" id="atab-patrons" onclick="switchAdminTab('patrons')">Patrons</button>
-      <button class="admin-tab" id="atab-requests" onclick="switchAdminTab('requests')">Requests</button>
-    </div>
-    <div id="admin-tenders-view"><div id="admin-tenders-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
-    <div id="admin-patrons-view" style="display:none;"><div id="admin-patrons-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
-    <div id="admin-requests-view" style="display:none;"><div id="admin-requests-list" class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading...</div></div></div>
-    <button class="btn-outline" onclick="lockAdmin()" style="margin-top:16px;">LOCK ADMIN</button>
+    <div id="av-t"><div id="al-t" class="ldst"><div class="ldsp"></div><div class="ldtx">Loading…</div></div></div>
+    <div id="av-p" style="display:none;"><div id="al-p" class="ldst"><div class="ldsp"></div><div class="ldtx">Loading…</div></div></div>
+    <div id="av-r" style="display:none;"><div id="al-r" class="ldst"><div class="ldsp"></div><div class="ldtx">Loading…</div></div></div>
+    <button class="bout" onclick="lockAdmin()" style="margin-top:16px;">LOCK ADMIN</button>
   </div>
 </div>
 
-<!-- ══════════ BOTTOM NAV ══════════ -->
-<nav class="bnav" id="bottom-nav" style="display:none;">
-  <button class="ni active" id="nav-discover" onclick="switchScreen('discover')">
-    <i class="ti ti-cards"></i><span class="nl">Discover</span>
-  </button>
-  <button class="ni pink" id="nav-myprofile" onclick="switchScreen('myprofile')">
-    <i class="ti ti-user-circle"></i><span class="nl">My Profile</span>
-  </button>
-  <button class="ni" id="nav-dashboard" onclick="switchScreen('tender-dashboard')" style="display:none;">
-    <i class="ti ti-shield-lock" style="color:var(--pink);"></i><span class="nl" style="color:var(--pink);">Dashboard</span>
-  </button>
-  <button class="ni" id="nav-admin" onclick="switchScreen('admin')" style="display:none;">
-    <i class="ti ti-settings" style="color:var(--orange);"></i><span class="nl" style="color:var(--orange);">Admin</span>
-  </button>
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav" style="display:none;">
+  <button class="ni active" id="nav-discover" onclick="go('discover')"><i class="ti ti-cards"></i><span class="nl">Discover</span></button>
+  <button class="ni pk" id="nav-myprofile" onclick="go('myprofile')"><i class="ti ti-user-circle"></i><span class="nl">My Profile</span></button>
+  <button class="ni" id="nav-tender-dash" style="display:none;" onclick="go('tender-dash')"><i class="ti ti-shield-lock" style="color:var(--pk);"></i><span class="nl" style="color:var(--pk);">Dashboard</span></button>
+  <button class="ni" id="nav-admin" style="display:none;" onclick="go('admin')"><i class="ti ti-settings" style="color:var(--or);"></i><span class="nl" style="color:var(--or);">Admin</span></button>
 </nav>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONFIG
-// ══════════════════════════════════════════════
-var SCRIPT_URL     = 'https://script.google.com/macros/s/AKfycbzA_SCRYd4c97zbXaIA0yP5sDiZi85YNBptIjNryRKGksMtSEAS_Gf7PGupjzmxl2iP/exec';
-var CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/djgf8nlyu/image/upload';
-var UPLOAD_PRESET  = 'wwco9alf';
-var TENDER_PIN     = '2026';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzA_SCRYd4c97zbXaIA0yP5sDiZi85YNBptIjNryRKGksMtSEAS_Gf7PGupjzmxl2iP/exec';
+var CL_URL     = 'https://api.cloudinary.com/v1_1/djgf8nlyu/image/upload';
+var CL_PRESET  = 'wwco9alf';
+var T_PIN      = '2026';
+var A_PIN      = '6969';
+var A_EMAILS   = ['leap31@comcast.net','customstripe55@gmail.com','sjwroblewski@gmail.com'];
 
-// ══════════════════════════════════════════════
-//  DEMO PROFILES
-// ══════════════════════════════════════════════
-var DEMO_PROFILES = [
-  { name:'Marco R.',  est:'The Velvet Lounge',     vibe:"I pour with intention. Every drink tells a story — walk up to my bar and I'll tell yours.",     photo:'https://randomuser.me/api/portraits/men/32.jpg',   init:'MR', likes:47  },
-  { name:'Nikki P.',  est:'City Bar · Chicago',    vibe:"Off-menu cocktails are my love language. Ask me what I'm feeling tonight.",                      photo:'https://randomuser.me/api/portraits/women/44.jpg', init:'NP', likes:83  },
-  { name:'Jordan K.', est:"Moe Joe's · Plainfield",vibe:"Craft beer nerd by day, whiskey whisperer by night. Pull up a stool.",                           photo:'https://randomuser.me/api/portraits/men/67.jpg',   init:'JK', likes:31  },
-  { name:'Emily W.',  est:'City Bar · Chicago',    vibe:"Six years behind the stick and still obsessed with the perfect martini. Let's talk cocktails.",   photo:'https://randomuser.me/api/portraits/women/21.jpg', init:'EW', likes:112 },
-  { name:'Carlos M.', est:'The Tipsy Turtle',      vibe:'Mezcal missionary. Tequila translator. I make agave make sense.',                                photo:'https://randomuser.me/api/portraits/men/55.jpg',   init:'CM', likes:58  }
+var DEMOS = [
+  {name:'Marco R.',  est:'The Velvet Lounge',     vibe:"I pour with intention. Every drink tells a story.",                                     photo:'https://randomuser.me/api/portraits/men/32.jpg',   init:'MR',likes:47},
+  {name:'Nikki P.',  est:'City Bar · Chicago',    vibe:"Off-menu cocktails are my love language. Ask me what I'm feeling tonight.",              photo:'https://randomuser.me/api/portraits/women/44.jpg', init:'NP',likes:83},
+  {name:'Jordan K.', est:"Moe Joe's · Plainfield",vibe:"Craft beer nerd by day, whiskey whisperer by night. Pull up a stool.",                   photo:'https://randomuser.me/api/portraits/men/67.jpg',   init:'JK',likes:31},
+  {name:'Emily W.',  est:'City Bar · Chicago',    vibe:"Six years behind the stick and still obsessed with the perfect martini.",                photo:'https://randomuser.me/api/portraits/women/21.jpg', init:'EW',likes:112},
+  {name:'Carlos M.', est:'The Tipsy Turtle',      vibe:'Mezcal missionary. Tequila translator. I make agave make sense.',                       photo:'https://randomuser.me/api/portraits/men/55.jpg',   init:'CM',likes:58}
 ];
 
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
-var appState = {
-  role: null,           // 'tender' or 'patron'
-  myProfile: null,      // current user's profile object
-  uploadedPhoto: '',
-  uploadedPatronPhoto: '',
-  allProfiles: [],
-  deckIdx: 0,
-  profilesLoaded: false,
-  activeCard: null,
-  isDragging: false,
-  startX: 0, curX: 0,
-  pinUnlocked: false,
-  dashEmail: ''
+var S = {
+  role: null, myProf: null,
+  tPhoto: '', pPhoto: '',
+  profs: [], idx: 0, loaded: false,
+  activeCard: null, dragging: false,
+  sx: 0, cx: 0,
+  adminReqs: [], dashReqs: []
 };
 
-// ══════════════════════════════════════════════
-//  CLOCK
-// ══════════════════════════════════════════════
+// CLOCK
 function tick() {
-  var n=new Date(), h=n.getHours()%12||12, m=String(n.getMinutes()).padStart(2,'0'), t=h+':'+m;
-  ['clk1','clk2','clk3','clk4','clk5'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=t;});
+  var n=new Date(),h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),t=h+':'+m;
+  for(var i=1;i<=6;i++){var e=document.getElementById('c'+i);if(e)e.textContent=t;}
 }
 tick(); setInterval(tick,10000);
 
-// ══════════════════════════════════════════════
-//  ROLE SELECTION
-// ══════════════════════════════════════════════
-function goToAdmin() {
-  // Show bottom nav and go straight to admin screen
-  document.getElementById('bottom-nav').style.display = 'flex';
-  document.getElementById('nav-admin').style.display  = 'flex';
-  switchScreen('admin');
-}
-
-function setRole(role) {
-  appState.role = role;
-  document.getElementById('bottom-nav').style.display = 'flex';
-  document.getElementById('nav-admin').style.display = 'flex';
-
-  if (role === 'tender') {
-    document.getElementById('nav-dashboard').style.display = 'flex';
-    switchScreen('tender-create');
-  } else {
-    switchScreen('patron-create');
-  }
-}
-
-// ══════════════════════════════════════════════
-//  SCREEN SWITCHING
-// ══════════════════════════════════════════════
-function switchScreen(name) {
+// NAVIGATION
+function go(name) {
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('active');});
-
-  var scr = document.getElementById('screen-' + name);
-  if (scr) scr.classList.add('active');
-
-  var navMap = {
-    'discover':          'nav-discover',
-    'myprofile':         'nav-myprofile',
-    'tender-dashboard':  'nav-dashboard',
-    'tender-create':     'nav-myprofile',
-    'patron-create':     'nav-myprofile',
-    'admin':             'nav-admin'
-  };
-  if (navMap[name]) {
-    var navEl = document.getElementById(navMap[name]);
-    if (navEl) navEl.classList.add('active');
-  }
-
-  if (name === 'discover' && !appState.profilesLoaded) loadProfiles();
+  var scr = document.getElementById('screen-'+name);
+  if(scr) scr.classList.add('active');
+  var nm = document.getElementById('nav-'+name);
+  if(nm) nm.classList.add('active');
+  if(name==='discover' && !S.loaded) loadProfs();
   window.scrollTo(0,0);
 }
 
-// ══════════════════════════════════════════════
-//  PHOTO UPLOAD
-// ══════════════════════════════════════════════
-function handlePhoto(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  document.getElementById('uprog').classList.add('show');
-  var fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', UPLOAD_PRESET);
-  fetch(CLOUDINARY_URL, {method:'POST',body:fd})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      appState.uploadedPhoto = d.secure_url;
-      document.getElementById('uprog').classList.remove('show');
-      var pz = document.getElementById('pzone');
-      var pp = document.getElementById('ppreview');
-      pp.src = appState.uploadedPhoto;
-      pp.classList.add('show');
-      pz.classList.add('has-photo');
-    })
-    .catch(function(){
-      document.getElementById('uprog').classList.remove('show');
-      showToast('Upload failed — please try again.', true);
-    });
+function setRole(role) {
+  S.role = role;
+  var nav = document.getElementById('bnav');
+  nav.style.display = 'flex';
+  if(role==='tender') {
+    document.getElementById('nav-tender-dash').style.display = 'flex';
+  }
+  go(role==='tender'?'tender-create':'patron-create');
 }
 
-// ══════════════════════════════════════════════
-//  TENDER FORM
-// ══════════════════════════════════════════════
-var TF = {
-  name:  {id:'t-name',  eid:'et-name',  touched:false, rule:function(v){return v&&v.length>=2;}},
-  phone: {id:'t-phone', eid:'et-phone', touched:false, rule:function(v){return v&&/^\+?[\d\s\-().]{7,15}$/.test(v);}},
-  email: {id:'t-email', eid:'et-email', touched:false, rule:function(v){return v&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}},
-  est:   {id:'t-est',   eid:'et-est',   touched:false, rule:function(v){return !!v;}},
-  vibe:  {id:'t-vibe',  eid:'et-vibe',  touched:false, rule:function(v){return !!v;}}
-};
+function goAdmin() {
+  var nav = document.getElementById('bnav');
+  nav.style.display = 'flex';
+  document.getElementById('nav-admin').style.display = 'flex';
+  go('admin');
+}
 
-function validateTF(k) {
-  var v = document.getElementById(TF[k].id).value.trim();
-  var ok = TF[k].rule(v);
-  if (!ok && TF[k].touched) {
-    document.getElementById(TF[k].id).classList.add('err');
-    document.getElementById(TF[k].eid).classList.add('show');
-  } else {
-    document.getElementById(TF[k].id).classList.remove('err');
-    document.getElementById(TF[k].eid).classList.remove('show');
-  }
+// PHOTO UPLOAD
+function uploadPhoto(e, who) {
+  var file = e.target.files[0];
+  if(!file) return;
+  var prog = document.getElementById((who==='t'?'t':'p')+'uprog');
+  prog.classList.add('show');
+  var fd = new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',CL_PRESET);
+  fetch(CL_URL,{method:'POST',body:fd})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var url = d.secure_url;
+      if(who==='t') {
+        S.tPhoto = url;
+        var img = document.getElementById('tpimg');
+        img.src = url; img.classList.add('show');
+        document.getElementById('tpzone').classList.add('hp');
+      } else {
+        S.pPhoto = url;
+        var img2 = document.getElementById('ppimg');
+        img2.src = url; img2.classList.add('show');
+        document.getElementById('ppzone').classList.add('hp');
+      }
+      prog.classList.remove('show');
+    })
+    .catch(function(){prog.classList.remove('show'); toast('Upload failed',true);});
+}
+
+// VALIDATION HELPERS
+function vName(v){return v&&v.trim().length>=2;}
+function vPhone(v){return v&&/^\+?[\d\s\-().]{7,15}$/.test(v.trim());}
+function vEmail(v){return v&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());}
+function vReq(v){return !!(v&&v.trim());}
+
+function showErr(id,show){
+  var e=document.getElementById(id);
+  if(e){if(show)e.classList.add('show');else e.classList.remove('show');}
+}
+function setErr(inpId,errId,ok){
+  var inp=document.getElementById(inpId);
+  if(inp){if(!ok)inp.classList.add('err');else inp.classList.remove('err');}
+  showErr(errId,!ok);
   return ok;
 }
 
-Object.keys(TF).forEach(function(k){
-  window.addEventListener('DOMContentLoaded', function(){
-  Object.keys(TF).forEach(function(k){
-    var el = document.getElementById(TF[k].id);
-    if (!el) return;
-    el.addEventListener('blur',  function(){TF[k].touched=true; validateTF(k);});
-    el.addEventListener('input', function(){if(TF[k].touched) validateTF(k);});
-  });
-});
-
-document.getElementById('tender-form').addEventListener('submit', function(e) {
+// TENDER FORM
+document.getElementById('tform').addEventListener('submit',function(e){
   e.preventDefault();
-  Object.keys(TF).forEach(function(k){TF[k].touched=true;});
-  var ok = Object.keys(TF).every(function(k){return validateTF(k);});
-  if (!ok) return;
-
-  var btn = document.getElementById('t-submit');
-  var inner = document.getElementById('t-btn-inner');
-  btn.disabled = true;
-  inner.innerHTML = '<div class="spinner"></div><span>Creating Profile…</span>';
-
-  var name  = document.getElementById('t-name').value.trim();
-  var phone = document.getElementById('t-phone').value.trim();
-  var email = document.getElementById('t-email').value.trim();
-  var est   = document.getElementById('t-est').value.trim();
-  var vibe  = document.getElementById('t-vibe').value.trim();
-  var firstName = name.split(' ')[0] || 'Tender';
-
-  fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'action=profile&name='+encodeURIComponent(name)+'&phone='+encodeURIComponent(phone)+'&email='+encodeURIComponent(email)+'&establishment='+encodeURIComponent(est)+'&vibe='+encodeURIComponent(vibe)+'&photo='+encodeURIComponent(appState.uploadedPhoto)
-  }).then(function(){afterTenderSubmit(name,phone,email,est,vibe,firstName);})
-    .catch(function(){afterTenderSubmit(name,phone,email,est,vibe,firstName);});
+  var n=document.getElementById('tn').value;
+  var ph=document.getElementById('tph').value;
+  var em=document.getElementById('tem').value;
+  var es=document.getElementById('tes').value;
+  var vi=document.getElementById('tvi').value;
+  var ok = true;
+  ok = setErr('tn','etn',vName(n)) && ok;
+  ok = setErr('tph','etph',vPhone(ph)) && ok;
+  ok = setErr('tem','etem',vEmail(em)) && ok;
+  ok = setErr('tes','etes',vReq(es)) && ok;
+  ok = setErr('tvi','etvi',vReq(vi)) && ok;
+  if(!ok) return;
+  var btn=document.getElementById('tsub');
+  var inn=document.getElementById('tbinn');
+  btn.disabled=true;
+  inn.innerHTML='<div class="spin"></div><span>Creating Profile…</span>';
+  var fn=n.trim().split(' ')[0]||'Tender';
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=profile&name='+enc(n)+'&phone='+enc(ph)+'&email='+enc(em)+'&establishment='+enc(es)+'&vibe='+enc(vi)+'&photo='+enc(S.tPhoto)})
+  .then(function(){afterTender(n,ph,em,es,vi,fn);})
+  .catch(function(){afterTender(n,ph,em,es,vi,fn);});
 });
 
-function afterTenderSubmit(name,phone,email,est,vibe,firstName) {
+function afterTender(n,ph,em,es,vi,fn) {
   setTimeout(function(){
-    appState.myProfile = {type:'tender',name:name,phone:phone,email:email,est:est,vibe:vibe,photo:appState.uploadedPhoto,likes:0};
-    var init = name.split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-    appState.allProfiles.unshift({name:name,est:est,vibe:vibe,photo:appState.uploadedPhoto,init:init,likes:0});
-    document.getElementById('tender-count').textContent = appState.allProfiles.length;
-    populateMyProfile();
-    document.getElementById('tender-dashboard-btn').style.display = 'block';
-    document.getElementById('tender-form-view').style.display = 'none';
-    document.getElementById('t-success-name').textContent = firstName.toUpperCase();
-    document.getElementById('tender-success').classList.add('show');
-  }, 700);
+    S.myProf={type:'tender',name:n.trim(),phone:ph.trim(),email:em.trim(),est:es.trim(),vibe:vi.trim(),photo:S.tPhoto,likes:0};
+    var init=n.trim().split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    S.profs.unshift({name:n.trim(),est:es.trim(),vibe:vi.trim(),photo:S.tPhoto,init:init,likes:0});
+    document.getElementById('tcnt').textContent=S.profs.length;
+    fillMyProf();
+    document.getElementById('dashlnk').style.display='block';
+    document.getElementById('nav-tender-dash').style.display='flex';
+    document.getElementById('tform-view').style.display='none';
+    document.getElementById('tsname').textContent=fn.toUpperCase();
+    document.getElementById('tsucc').classList.add('show');
+  },700);
 }
 
-// ══════════════════════════════════════════════
-//  PATRON FORM
-// ══════════════════════════════════════════════
-var PF = {
-  first: {id:'p-first', eid:'ep-first', touched:false, rule:function(v){return !!v;}},
-  last:  {id:'p-last',  eid:'ep-last',  touched:false, rule:function(v){return !!v;}},
-  email: {id:'p-email', eid:'ep-email', touched:false, rule:function(v){return v&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}},
-  phone: {id:'p-phone', eid:'ep-phone', touched:false, rule:function(v){return v&&/^\+?[\d\s\-().]{7,15}$/.test(v);}}
-};
-
-function validatePF(k) {
-  var v = document.getElementById(PF[k].id).value.trim();
-  var ok = PF[k].rule(v);
-  if (!ok && PF[k].touched) {
-    document.getElementById(PF[k].id).classList.add('err');
-    document.getElementById(PF[k].eid).classList.add('show');
-  } else {
-    document.getElementById(PF[k].id).classList.remove('err');
-    document.getElementById(PF[k].eid).classList.remove('show');
-  }
-  return ok;
-}
-
-window.addEventListener('DOMContentLoaded', function(){
-  Object.keys(PF).forEach(function(k){
-    var el = document.getElementById(PF[k].id);
-    if (!el) return;
-    el.addEventListener('blur',  function(){PF[k].touched=true; validatePF(k);});
-    el.addEventListener('input', function(){if(PF[k].touched) validatePF(k);});
-  });
-});
-
-document.getElementById('patron-form').addEventListener('submit', function(e) {
+// PATRON FORM
+document.getElementById('pform').addEventListener('submit',function(e){
   e.preventDefault();
-  Object.keys(PF).forEach(function(k){PF[k].touched=true;});
-  var ok = Object.keys(PF).every(function(k){return validatePF(k);});
-  if (!ok) return;
-
-  var btn = document.getElementById('p-submit');
-  var inner = document.getElementById('p-btn-inner');
-  btn.disabled = true;
-  inner.innerHTML = '<div class="spinner" style="border-top-color:#40c4ff;border-color:rgba(64,196,255,0.2);"></div><span>Creating Profile…</span>';
-
-  var first = document.getElementById('p-first').value.trim();
-  var last  = document.getElementById('p-last').value.trim();
-  var email = document.getElementById('p-email').value.trim();
-  var phone = document.getElementById('p-phone').value.trim();
-
-  fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'action=patron&firstName='+encodeURIComponent(first)+'&lastName='+encodeURIComponent(last)+'&email='+encodeURIComponent(email)+'&phone='+encodeURIComponent(phone)+'&photo='+encodeURIComponent(appState.uploadedPatronPhoto)
-  }).then(function(){afterPatronSubmit(first,last,email,phone);})
-    .catch(function(){afterPatronSubmit(first,last,email,phone);});
+  var fn=document.getElementById('pfn').value;
+  var ln=document.getElementById('pln').value;
+  var em=document.getElementById('pem').value;
+  var ph=document.getElementById('pph').value;
+  var ok=true;
+  ok=setErr('pfn','epfn',vReq(fn))&&ok;
+  ok=setErr('pln','epln',vReq(ln))&&ok;
+  ok=setErr('pem','epem',vEmail(em))&&ok;
+  ok=setErr('pph','epph',vPhone(ph))&&ok;
+  if(!ok) return;
+  var btn=document.getElementById('psub');
+  var inn=document.getElementById('pbinn');
+  btn.disabled=true;
+  inn.innerHTML='<div class="spin" style="border-top-color:var(--bl);border-color:rgba(64,196,255,.15);"></div><span>Creating Profile…</span>';
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=patron&firstName='+enc(fn)+'&lastName='+enc(ln)+'&email='+enc(em)+'&phone='+enc(ph)+'&photo='+enc(S.pPhoto)})
+  .then(function(){afterPatron(fn,ln,em,ph);})
+  .catch(function(){afterPatron(fn,ln,em,ph);});
 });
 
-function handlePatronPhoto(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  document.getElementById('uprog-patron').classList.add('show');
-  var fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', UPLOAD_PRESET);
-  fetch(CLOUDINARY_URL, {method:'POST',body:fd})
+function afterPatron(fn,ln,em,ph) {
+  setTimeout(function(){
+    S.myProf={type:'patron',name:fn.trim()+' '+ln.trim(),firstName:fn.trim(),email:em.trim(),phone:ph.trim(),photo:S.pPhoto};
+    fillMyProf();
+    document.getElementById('pform-view').style.display='none';
+    document.getElementById('psname').textContent=fn.trim().toUpperCase();
+    document.getElementById('psucc').classList.add('show');
+  },700);
+}
+
+// MY PROFILE
+function fillMyProf() {
+  if(!S.myProf) return;
+  var p=S.myProf;
+  document.getElementById('noprof').style.display='none';
+  document.getElementById('myprofcont').style.display='block';
+  document.getElementById('mynm').textContent=p.name;
+  if(p.type==='tender'){
+    document.getElementById('mybr').textContent='🍸 '+p.est;
+    document.getElementById('mybr').style.color='var(--gn)';
+    if(p.vibe){document.getElementById('myvb').textContent='"'+p.vibe+'"';document.getElementById('myvb').style.display='block';}
+  } else {
+    document.getElementById('mybr').textContent='👀 Patron';
+    document.getElementById('mybr').style.color='var(--bl)';
+  }
+  if(p.photo){
+    document.getElementById('myphoto').src=p.photo;
+    document.getElementById('myphoto').style.display='block';
+    document.getElementById('myph').style.display='none';
+  } else {
+    var init=p.name.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    document.getElementById('myph').textContent=init;
+  }
+  document.getElementById('myph2').textContent=p.phone||'—';
+  document.getElementById('myem').textContent=p.email||'—';
+}
+
+// LOAD PROFILES
+function loadProfs() {
+  S.loaded=true;
+  fetch(SCRIPT_URL+'?action=profiles')
     .then(function(r){return r.json();})
     .then(function(d){
-      appState.uploadedPatronPhoto = d.secure_url;
-      document.getElementById('uprog-patron').classList.remove('show');
-      var pz = document.getElementById('pzone-patron');
-      var pp = document.getElementById('ppreview-patron');
-      pp.src = appState.uploadedPatronPhoto;
-      pp.classList.add('show');
-      pz.classList.add('has-photo');
-    })
-    .catch(function(){
-      document.getElementById('uprog-patron').classList.remove('show');
-      showToast('Upload failed — please try again.', true);
-    });
-}
-
-function afterPatronSubmit(first,last,email,phone) {
-  setTimeout(function(){
-    appState.myProfile = {type:'patron',name:first+' '+last,firstName:first,email:email,phone:phone,photo:appState.uploadedPatronPhoto};
-    populateMyProfile();
-    document.getElementById('patron-form-view').style.display = 'none';
-    document.getElementById('p-success-name').textContent = first.toUpperCase();
-    document.getElementById('patron-success').classList.add('show');
-  }, 700);
-}
-
-// ══════════════════════════════════════════════
-//  MY PROFILE
-// ══════════════════════════════════════════════
-function populateMyProfile() {
-  if (!appState.myProfile) return;
-  var p = appState.myProfile;
-  document.getElementById('no-profile-msg').style.display = 'none';
-  document.getElementById('my-profile-content').style.display = 'block';
-  document.getElementById('my-name').textContent = p.name;
-
-  if (p.type === 'tender') {
-    document.getElementById('my-bar').textContent  = '🍸 ' + p.est;
-    document.getElementById('my-bar').style.color  = 'var(--green)';
-    if (p.vibe) {
-      document.getElementById('my-vibe').textContent = '"' + p.vibe + '"';
-      document.getElementById('my-vibe').style.display = 'block';
-    }
-    document.getElementById('tender-dashboard-btn').style.display = 'block';
-    if (p.photo) {
-      document.getElementById('my-photo').src = p.photo;
-      document.getElementById('my-photo').style.display = 'block';
-      document.getElementById('my-placeholder').style.display = 'none';
-    } else {
-      var init = p.name.split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-      document.getElementById('my-placeholder').textContent = init;
-    }
-  } else {
-    document.getElementById('my-bar').textContent = '👀 Patron';
-    document.getElementById('my-bar').style.color = 'var(--blue)';
-    if (p.photo) {
-      document.getElementById('my-photo').src = p.photo;
-      document.getElementById('my-photo').style.display = 'block';
-      document.getElementById('my-placeholder').style.display = 'none';
-    } else {
-      var pi = p.name.split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-      document.getElementById('my-placeholder').textContent = pi;
-    }
-  }
-
-  document.getElementById('my-phone').textContent = p.phone || '—';
-  document.getElementById('my-email').textContent = p.email || '—';
-}
-
-// ══════════════════════════════════════════════
-//  LOAD PROFILES FROM SHEET
-// ══════════════════════════════════════════════
-function loadProfiles() {
-  appState.profilesLoaded = true;
-  fetch(SCRIPT_URL + '?action=profiles')
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var real = (d.result==='success' && d.profiles && d.profiles.length>0) ? d.profiles : [];
-      real = real.map(function(p){
-        p.init = (p.name||'').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
+      var real=(d.result==='success'&&d.profiles&&d.profiles.length)?d.profiles:[];
+      real=real.map(function(p){
+        p.init=(p.name||'').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2)||'??';
         return p;
       });
-      var seen = {};
-      var merged = real.concat(DEMO_PROFILES).filter(function(p){
-        if(seen[p.name]) return false;
-        seen[p.name]=true;
-        return true;
-      });
-      appState.allProfiles = merged;
-      document.getElementById('tender-count').textContent = appState.allProfiles.length;
-      appState.deckIdx = 0;
-      renderDeck();
+      var seen={};
+      S.profs=real.concat(DEMOS).filter(function(p){if(seen[p.name])return false;seen[p.name]=true;return true;});
+      document.getElementById('tcnt').textContent=S.profs.length;
+      S.idx=0; renderDeck();
     })
-    .catch(function(){
-      appState.allProfiles = DEMO_PROFILES.slice();
-      document.getElementById('tender-count').textContent = appState.allProfiles.length;
-      renderDeck();
-    });
+    .catch(function(){S.profs=DEMOS.slice();document.getElementById('tcnt').textContent=S.profs.length;renderDeck();});
 }
 
-// ══════════════════════════════════════════════
-//  SWIPE DECK
-// ══════════════════════════════════════════════
-function resetDeck() {
-  appState.deckIdx = 0;
-  renderDeck();
-}
+// DECK
+function resetDeck(){S.idx=0;renderDeck();}
 
 function renderDeck() {
-  var wrap    = document.getElementById('deck-wrap');
-  var empty   = document.getElementById('deck-empty');
-  var actions = document.getElementById('swipe-actions');
-  var hint    = document.getElementById('swipe-hint');
-  var counter = document.getElementById('deck-counter');
-
-  wrap.innerHTML = '';
-  counter.innerHTML = '';
-  appState.activeCard = null;
-
-  var remaining = appState.allProfiles.length - appState.deckIdx;
-
-  if (remaining <= 0) {
-    empty.classList.add('show');
-    actions.style.display = 'none';
-    hint.style.display    = 'none';
-    return;
+  var wrap=document.getElementById('dwrap');
+  var empty=document.getElementById('dempty');
+  var acts=document.getElementById('sact');
+  var hint=document.getElementById('shint');
+  var ctr=document.getElementById('dctr');
+  wrap.innerHTML=''; ctr.innerHTML=''; S.activeCard=null;
+  var rem=S.profs.length-S.idx;
+  if(rem<=0){empty.classList.add('show');acts.style.display='none';hint.style.display='none';return;}
+  empty.classList.remove('show');acts.style.display='flex';hint.style.display='block';
+  S.profs.forEach(function(_,i){var d=document.createElement('div');d.className='cdot'+(i===S.idx?' on':'');ctr.appendChild(d);});
+  var n=Math.min(3,rem);
+  for(var i=n-1;i>=0;i--){
+    var idx=S.idx+i;
+    if(idx>=S.profs.length) continue;
+    buildCard(S.profs[idx],i,wrap);
   }
-
-  empty.classList.remove('show');
-  actions.style.display = 'flex';
-  hint.style.display    = 'block';
-
-  appState.allProfiles.forEach(function(_,i){
-    var d = document.createElement('div');
-    d.className = 'cdot' + (i===appState.deckIdx?' on':'');
-    counter.appendChild(d);
-  });
-
-  var n = Math.min(3, remaining);
-  for (var i = n-1; i >= 0; i--) {
-    var idx = appState.deckIdx + i;
-    if (idx >= appState.allProfiles.length) continue;
-    buildCard(appState.allProfiles[idx], i, wrap);
-  }
-
-  var top = wrap.querySelector('[data-top="1"]');
-  if (top) attachDrag(top);
+  var top=wrap.querySelector('[data-top="1"]');
+  if(top) attachDrag(top);
 }
 
-function buildCard(p, stackPos, wrap) {
-  var card = document.createElement('div');
-  card.className = 'swipe-card';
-  card.dataset.top = stackPos===0?'1':'0';
-  var scale = 1 - stackPos*0.03;
-  var ty    = stackPos*10;
-  card.style.cssText = 'transform:scale('+scale+') translateY('+ty+'px);z-index:'+(10-stackPos)+';transition:transform 0.3s;';
-
-  var photoHtml = p.photo
-    ? '<img class="card-photo" src="'+esc(p.photo)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
-    + '<div class="card-photo-placeholder" style="display:none;">'+esc(p.init)+'</div>'
-    : '<div class="card-photo-placeholder">'+esc(p.init)+'</div>';
-
-  card.innerHTML = photoHtml
-    + '<div class="card-gradient"></div>'
-    + '<div class="stamp stamp-like">LIKE</div>'
-    + '<div class="stamp stamp-nope">NOPE</div>'
-    + '<div class="card-info">'
-    +   '<div class="card-name">'+esc(p.name)+'</div>'
-    +   '<div class="card-bar">🍸 '+esc(p.est)+'</div>'
-    +   '<div class="card-vibe">"'+esc(p.vibe)+'"</div>'
-    + '</div>';
-
-  wrap.appendChild(card);
+function buildCard(p,sp,wrap) {
+  var c=document.createElement('div');
+  c.className='scard'; c.dataset.top=sp===0?'1':'0';
+  var sc=1-sp*0.03,ty=sp*10;
+  c.style.cssText='transform:scale('+sc+') translateY('+ty+'px);z-index:'+(10-sp)+';transition:transform .3s;';
+  var ph=p.photo
+    ?'<img class="cphoto" src="'+esc(p.photo)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+    +'<div class="cphoto-ph" style="display:none;">'+esc(p.init)+'</div>'
+    :'<div class="cphoto-ph">'+esc(p.init)+'</div>';
+  c.innerHTML=ph+'<div class="cgrad"></div><div class="stamp sl">LIKE</div><div class="stamp sn">NOPE</div>'
+    +'<div class="cinfo"><div class="cname">'+esc(p.name)+'</div><div class="cbar">🍸 '+esc(p.est)+'</div><div class="cvibe">"'+esc(p.vibe)+'"</div></div>';
+  wrap.appendChild(c);
 }
 
-function attachDrag(card) {
-  appState.activeCard = card;
-  card.addEventListener('mousedown',  onStart);
-  card.addEventListener('touchstart', onStart, {passive:true});
+function attachDrag(c) {
+  S.activeCard=c;
+  c.addEventListener('mousedown',ds);
+  c.addEventListener('touchstart',ds,{passive:true});
 }
 
-function onStart(e) {
-  if (!appState.activeCard) return;
-  appState.isDragging = true;
-  appState.startX = e.type==='touchstart'?e.touches[0].clientX:e.clientX;
-  appState.curX = 0;
-  appState.activeCard.style.transition = 'none';
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, {passive:false});
-  document.addEventListener('mouseup',   onEnd);
-  document.addEventListener('touchend',  onEnd);
+function ds(e) {
+  if(!S.activeCard) return;
+  S.dragging=true; S.sx=(e.type==='touchstart'?e.touches[0].clientX:e.clientX); S.cx=0;
+  S.activeCard.style.transition='none';
+  document.addEventListener('mousemove',dm); document.addEventListener('touchmove',dm,{passive:false});
+  document.addEventListener('mouseup',de); document.addEventListener('touchend',de);
 }
 
-function onMove(e) {
-  if (!appState.isDragging || !appState.activeCard) return;
-  if (e.type==='touchmove') e.preventDefault();
-  appState.curX = (e.type==='touchmove'?e.touches[0].clientX:e.clientX) - appState.startX;
-  var rot = appState.curX * 0.07;
-  appState.activeCard.style.transform = 'translateX('+appState.curX+'px) rotate('+rot+'deg) scale(1)';
-  var like = appState.activeCard.querySelector('.stamp-like');
-  var nope = appState.activeCard.querySelector('.stamp-nope');
-  if (appState.curX>40)       {like.style.opacity=Math.min(1,(appState.curX-40)/60); nope.style.opacity=0;}
-  else if (appState.curX<-40) {nope.style.opacity=Math.min(1,(-appState.curX-40)/60); like.style.opacity=0;}
-  else                        {like.style.opacity=0; nope.style.opacity=0;}
+function dm(e) {
+  if(!S.dragging||!S.activeCard) return;
+  if(e.type==='touchmove') e.preventDefault();
+  S.cx=(e.type==='touchmove'?e.touches[0].clientX:e.clientX)-S.sx;
+  S.activeCard.style.transform='translateX('+S.cx+'px) rotate('+(S.cx*0.07)+'deg) scale(1)';
+  var sl=S.activeCard.querySelector('.sl'),sn=S.activeCard.querySelector('.sn');
+  if(S.cx>40){sl.style.opacity=Math.min(1,(S.cx-40)/60);sn.style.opacity=0;}
+  else if(S.cx<-40){sn.style.opacity=Math.min(1,(-S.cx-40)/60);sl.style.opacity=0;}
+  else{sl.style.opacity=0;sn.style.opacity=0;}
 }
 
-function onEnd() {
-  if (!appState.isDragging || !appState.activeCard) return;
-  appState.isDragging = false;
-  document.removeEventListener('mousemove', onMove);
-  document.removeEventListener('touchmove', onMove);
-  document.removeEventListener('mouseup',   onEnd);
-  document.removeEventListener('touchend',  onEnd);
-
-  if (Math.abs(appState.curX) > 90) {
-    flyOut(appState.curX>0?'right':'left');
-  } else {
-    appState.activeCard.style.transition = 'transform 0.4s cubic-bezier(0.22,1,0.36,1)';
-    appState.activeCard.style.transform  = 'scale(1) translateX(0) rotate(0)';
-    appState.activeCard.querySelectorAll('.stamp').forEach(function(s){s.style.opacity=0;});
+function de() {
+  if(!S.dragging||!S.activeCard) return;
+  S.dragging=false;
+  document.removeEventListener('mousemove',dm); document.removeEventListener('touchmove',dm);
+  document.removeEventListener('mouseup',de); document.removeEventListener('touchend',de);
+  if(Math.abs(S.cx)>90) flyOut(S.cx>0?'right':'left');
+  else {
+    S.activeCard.style.transition='transform .4s cubic-bezier(.22,1,.36,1)';
+    S.activeCard.style.transform='scale(1) translateX(0) rotate(0)';
+    S.activeCard.querySelectorAll('.stamp').forEach(function(s){s.style.opacity=0;});
   }
 }
 
-function swipeCard(dir) {
-  if (!appState.activeCard) return;
-  flyOut(dir);
-}
+function swipe(dir){if(!S.activeCard) return; flyOut(dir);}
 
 function flyOut(dir) {
-  var card = appState.activeCard;
-  appState.activeCard = null;
-  var x = dir==='right'?window.innerWidth+300:-(window.innerWidth+300);
-  card.style.transition = 'transform 0.42s cubic-bezier(0.22,1,0.36,1)';
-  card.style.transform  = 'translateX('+x+'px) rotate('+(dir==='right'?25:-25)+'deg)';
-
-  if (dir==='right') {
-    showToast('❤️  Follow Request Sent!');
-    sendFollowRequest(appState.deckIdx);
-  }
-
-  appState.deckIdx++;
-  setTimeout(renderDeck, 400);
+  var c=S.activeCard; S.activeCard=null;
+  var x=dir==='right'?window.innerWidth+300:-(window.innerWidth+300);
+  c.style.transition='transform .42s cubic-bezier(.22,1,.36,1)';
+  c.style.transform='translateX('+x+'px) rotate('+(dir==='right'?25:-25)+'deg)';
+  if(dir==='right'){toast('❤️  Follow Request Sent!');sendFollow(S.idx);}
+  S.idx++;
+  setTimeout(renderDeck,400);
 }
 
-function sendFollowRequest(idx) {
-  var tender = appState.allProfiles[idx];
-  if (!tender) return;
-
-  var patronName  = appState.myProfile ? appState.myProfile.name  : 'Anonymous';
-  var patronEmail = appState.myProfile ? appState.myProfile.email : '';
-
-  fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'action=follow'
-      +'&tenderName='+encodeURIComponent(tender.name)
-      +'&patronName='+encodeURIComponent(patronName)
-      +'&patronEmail='+encodeURIComponent(patronEmail)
-  }).catch(function(){});
+function sendFollow(idx) {
+  var t=S.profs[idx]; if(!t) return;
+  var pn=S.myProf?S.myProf.name:'Anonymous';
+  var pe=S.myProf?S.myProf.email:'';
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=follow&tenderName='+enc(t.name)+'&patronName='+enc(pn)+'&patronEmail='+enc(pe)}).catch(function(){});
 }
 
-// ══════════════════════════════════════════════
-//  PIN / TENDER DASHBOARD
-// ══════════════════════════════════════════════
-function checkPin() {
-  var email = document.getElementById('pin-email').value.trim();
-  var pin   = document.getElementById('pin-input').value.trim();
-  var errEl = document.getElementById('pin-error');
-
-  if (pin !== TENDER_PIN || !email) {
-    errEl.classList.add('show');
-    return;
-  }
-
-  errEl.classList.remove('show');
-  appState.pinUnlocked = true;
-  appState.dashEmail   = email;
-
-  document.getElementById('pin-view').style.display       = 'none';
-  document.getElementById('dashboard-view').style.display = 'block';
-
-  loadDashboard(email);
+// TENDER DASHBOARD PIN
+function checkTenderPin() {
+  var em=document.getElementById('tpin-em').value.trim();
+  var pin=document.getElementById('tpin-in').value.trim();
+  if(pin!==T_PIN||!em){document.getElementById('tpin-err').classList.add('show');return;}
+  document.getElementById('tpin-err').classList.remove('show');
+  document.getElementById('tpin-view').style.display='none';
+  document.getElementById('tdash-view').style.display='block';
+  loadTenderDash(em);
 }
 
-function lockDashboard() {
-  appState.pinUnlocked = false;
-  appState.dashEmail   = '';
-  document.getElementById('pin-view').style.display       = 'block';
-  document.getElementById('dashboard-view').style.display = 'none';
-  document.getElementById('pin-input').value  = '';
-  document.getElementById('pin-email').value  = '';
+function lockTender() {
+  document.getElementById('tpin-view').style.display='block';
+  document.getElementById('tdash-view').style.display='none';
+  document.getElementById('tpin-in').value='';
+  document.getElementById('tpin-em').value='';
 }
 
-function loadDashboard(email) {
-  document.getElementById('requests-list').innerHTML =
-    '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">Loading requests…</div></div>';
-
-  fetch(SCRIPT_URL + '?action=dashboard&email=' + encodeURIComponent(email))
+function loadTenderDash(em) {
+  document.getElementById('dreqs').innerHTML='<div class="ldst"><div class="ldsp"></div><div class="ldtx">Loading…</div></div>';
+  fetch(SCRIPT_URL+'?action=dashboard&email='+encodeURIComponent(em))
     .then(function(r){return r.json();})
     .then(function(d){
-      if (d.result === 'success') {
-        document.getElementById('dash-name').textContent     = d.tenderName || email;
-        document.getElementById('dash-likes').textContent    = d.likes || 0;
-        document.getElementById('dash-pending').textContent  = d.pending || 0;
-        document.getElementById('dash-approved').textContent = d.approved || 0;
-        renderRequests(d.requests || []);
+      if(d.result==='success'){
+        document.getElementById('dnm').textContent=d.tenderName||em;
+        document.getElementById('dlk').textContent=d.likes||0;
+        document.getElementById('dpn').textContent=d.pending||0;
+        document.getElementById('dap').textContent=d.approved||0;
+        renderTenderReqs(d.requests||[]);
       } else {
-        document.getElementById('requests-list').innerHTML =
-          '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No requests found for this email.<br>Make sure you used the same email when creating your profile.</div>';
+        document.getElementById('dreqs').innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No data found for this email.</div>';
       }
-    })
-    .catch(function(){
-      document.getElementById('requests-list').innerHTML =
-        '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">Could not load requests. Please try again.</div>';
-    });
+    }).catch(function(){document.getElementById('dreqs').innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">Could not load. Please try again.</div>';});
 }
 
-function renderRequests(requests) {
-  var list = document.getElementById('requests-list');
-  if (!requests.length) {
-    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No follow requests yet.<br>Share your profile to get discovered!</div>';
-    return;
-  }
-
-  list.innerHTML = requests.map(function(r, i) {
-    var init = (r.patronName||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-    var statusHtml = r.status === 'approved'
-      ? '<span class="req-status req-approved">✓ Approved</span>'
-      : r.status === 'denied'
-        ? '<span class="req-status req-denied">✕ Denied</span>'
-        : '<div class="req-actions"><button class="req-approve" onclick="handleRequest('+i+',\'approved\')">✓ Approve</button><button class="req-deny" onclick="handleRequest('+i+',\'denied\')">✕ Deny</button></div>';
-
-    return '<div class="req-card" id="req-'+i+'">'
-      + '<div class="req-row">'
-      +   (r.patronPhoto ? '<img src="'+esc(r.patronPhoto)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,0.3);">' : '<div class="req-avatar">'+esc(init)+'</div>')
-      +   '<div class="req-info">'
-      +     '<div class="req-name">'+esc(r.patronName||'Unknown')+'</div>'
-      +     '<div class="req-detail">'+esc(r.patronEmail||'')+'</div>'
-      +   '</div>'
-      + '</div>'
-      + statusHtml
-      + '</div>';
+function renderTenderReqs(reqs) {
+  S.dashReqs=reqs;
+  var el=document.getElementById('dreqs');
+  if(!reqs.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No follow requests yet.</div>';return;}
+  el.innerHTML=reqs.map(function(r,i){
+    var init=(r.patronName||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=r.patronPhoto?'<img src="'+esc(r.patronPhoto)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    var st=r.status==='approved'?'<span class="rst rapst">✓ Approved</span>':r.status==='denied'?'<span class="rst rdnst">✕ Denied</span>':'<div class="racts"><button class="rappr" onclick="tReq('+i+',\'approved\')">✓ Approve</button><button class="rdeny" onclick="tReq('+i+',\'denied\')">✕ Deny</button></div>';
+    return '<div class="rcard" id="dr'+i+'"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(r.patronName||'Unknown')+'</div><div class="rdt">'+esc(r.patronEmail||'')+'</div></div></div>'+st+'</div>';
   }).join('');
-
-  window._dashRequests = requests;
 }
 
-function handleRequest(idx, status) {
-  var req = window._dashRequests[idx];
-  if (!req) return;
-
-  fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'action=updateFollow'
-      +'&tenderEmail='+encodeURIComponent(appState.dashEmail)
-      +'&patronEmail='+encodeURIComponent(req.patronEmail)
-      +'&status='+encodeURIComponent(status)
-  }).catch(function(){});
-
-  // Update UI immediately
-  var card = document.getElementById('req-'+idx);
-  var actDiv = card.querySelector('.req-actions');
-  if (actDiv) {
-    actDiv.outerHTML = status==='approved'
-      ? '<span class="req-status req-approved">✓ Approved</span>'
-      : '<span class="req-status req-denied">✕ Denied</span>';
-  }
-
-  showToast(status==='approved'?'✓ Approved!':'✕ Denied');
-
-  // Update counts
-  var pending  = parseInt(document.getElementById('dash-pending').textContent)||0;
-  var approved = parseInt(document.getElementById('dash-approved').textContent)||0;
-  if (pending > 0) document.getElementById('dash-pending').textContent  = pending-1;
-  if (status==='approved') document.getElementById('dash-approved').textContent = approved+1;
+function tReq(idx,status) {
+  var r=S.dashReqs[idx]; if(!r) return;
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=updateFollow&tenderEmail='+enc(document.getElementById('tpin-em').value.trim())+'&patronEmail='+enc(r.patronEmail)+'&status='+enc(status)}).catch(function(){});
+  var c=document.getElementById('dr'+idx);
+  var a=c.querySelector('.racts');
+  if(a) a.outerHTML=status==='approved'?'<span class="rst rapst">✓ Approved</span>':'<span class="rst rdnst">✕ Denied</span>';
+  toast(status==='approved'?'✓ Approved!':'✕ Denied');
+  var pn=parseInt(document.getElementById('dpn').textContent)||0;
+  var ap=parseInt(document.getElementById('dap').textContent)||0;
+  if(pn>0) document.getElementById('dpn').textContent=pn-1;
+  if(status==='approved') document.getElementById('dap').textContent=ap+1;
 }
 
-// ══════════════════════════════════════════════
-//  TOAST
-// ══════════════════════════════════════════════
-var toastTimer;
-function showToast(msg, isOrange) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (isOrange?' orange':'') + ' show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){t.classList.remove('show');}, 2000);
-}
-
-// ══════════════════════════════════════════════
-//  UTIL
-// ══════════════════════════════════════════════
-// ══════════════════════════════════════════════
-//  ADMIN
-// ══════════════════════════════════════════════
-var ADMIN_PIN    = '6969';
-var ADMIN_EMAILS = ['leap31@comcast.net','customstripe55@gmail.com','sjwroblewski@gmail.com'];
-var adminData    = null;
-
+// ADMIN PIN
 function checkAdminPin() {
-  var email = document.getElementById('admin-email').value.trim().toLowerCase();
-  var pin   = document.getElementById('admin-pin-input').value.trim();
-  var errEl = document.getElementById('admin-pin-error');
-  var validEmail = ADMIN_EMAILS.some(function(e){ return e.toLowerCase() === email; });
-  if (!validEmail || pin !== ADMIN_PIN) { errEl.classList.add('show'); return; }
-  errEl.classList.remove('show');
-  document.getElementById('admin-pin-view').style.display  = 'none';
-  document.getElementById('admin-content').style.display   = 'block';
-  loadAdminData();
+  var em=document.getElementById('apin-em').value.trim().toLowerCase();
+  var pin=document.getElementById('apin-in').value.trim();
+  var valid=A_EMAILS.some(function(e){return e.toLowerCase()===em;});
+  if(!valid||pin!==A_PIN){document.getElementById('apin-err').classList.add('show');return;}
+  document.getElementById('apin-err').classList.remove('show');
+  document.getElementById('apin-view').style.display='none';
+  document.getElementById('adash-view').style.display='block';
+  loadAdmin();
 }
 
 function lockAdmin() {
-  document.getElementById('admin-pin-view').style.display  = 'block';
-  document.getElementById('admin-content').style.display   = 'none';
-  document.getElementById('admin-pin-input').value = '';
-  document.getElementById('admin-email').value     = '';
-  adminData = null;
+  document.getElementById('apin-view').style.display='block';
+  document.getElementById('adash-view').style.display='none';
+  document.getElementById('apin-in').value='';
+  document.getElementById('apin-em').value='';
 }
 
-function switchAdminTab(tab) {
-  ['tenders','patrons','requests'].forEach(function(t) {
-    document.getElementById('admin-'+t+'-view').style.display = t===tab?'block':'none';
-    document.getElementById('atab-'+t).className = t===tab?'admin-tab active-admin-tab':'admin-tab';
+function aTab(t) {
+  ['t','p','r'].forEach(function(x){
+    document.getElementById('av-'+x).style.display=x===t?'block':'none';
+    document.getElementById('at-'+x).className='atab'+(x===t?' on':'');
   });
 }
 
-function loadAdminData() {
-  fetch(SCRIPT_URL + '?action=admin')
-    .then(function(r){ return r.json(); })
+function loadAdmin() {
+  fetch(SCRIPT_URL+'?action=admin')
+    .then(function(r){return r.json();})
     .then(function(d){
-      if (d.result !== 'success') { showToast('Could not load admin data.', true); return; }
-      adminData = d;
-      document.getElementById('admin-total-tenders').textContent  = (d.tenders  ||[]).length;
-      document.getElementById('admin-total-patrons').textContent   = (d.patrons  ||[]).length;
-      document.getElementById('admin-total-requests').textContent  = (d.requests ||[]).length;
-      renderAdminTenders(d.tenders  ||[]);
-      renderAdminPatrons(d.patrons  ||[]);
-      renderAdminRequests(d.requests||[]);
-    })
-    .catch(function(){ showToast('Could not load admin data.', true); });
+      if(d.result!=='success'){toast('Could not load admin data.',true);return;}
+      document.getElementById('a-tn').textContent=(d.tenders||[]).length;
+      document.getElementById('a-pn').textContent=(d.patrons||[]).length;
+      document.getElementById('a-rn').textContent=(d.requests||[]).length;
+      renderAT(d.tenders||[]);
+      renderAP(d.patrons||[]);
+      renderAR(d.requests||[]);
+    }).catch(function(){toast('Could not load admin data.',true);});
 }
 
-function renderAdminTenders(tenders) {
-  var el = document.getElementById('admin-tenders-list');
-  if (!tenders.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No tenders yet.</div>'; return; }
-  el.innerHTML = tenders.map(function(t) {
-    var init = (t.name||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-    var photoHtml = t.photo ? '<img src="'+esc(t.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,0.3);">' : '<div class="req-avatar">'+esc(init)+'</div>';
-    return '<div class="req-card">'+
-      '<div class="req-row">'+photoHtml+
-      '<div class="req-info"><div class="req-name">'+esc(t.name)+'</div>'+
-      '<div class="req-detail">'+esc(t.est)+'</div>'+
-      '<div class="req-detail" style="color:var(--orange);">'+'❤️ '+(t.likes||0)+' likes</div></div></div>'+
-      '<div style="font-size:11px;color:var(--muted);margin-top:8px;font-style:italic;">"'+esc(t.vibe)+'"</div></div>';
+function renderAT(tenders) {
+  var el=document.getElementById('al-t');
+  if(!tenders.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No tenders yet.</div>';return;}
+  el.innerHTML=tenders.map(function(t){
+    var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=t.photo?'<img src="'+esc(t.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(t.name)+'</div><div class="rdt">'+esc(t.est)+'</div><div class="rdt" style="color:var(--or);">❤️ '+(t.likes||0)+' likes</div></div></div><div style="font-size:11px;color:var(--mu);margin-top:8px;font-style:italic;">"'+esc(t.vibe)+'"</div></div>';
   }).join('');
 }
 
-function renderAdminPatrons(patrons) {
-  var el = document.getElementById('admin-patrons-list');
-  if (!patrons.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No patrons yet.</div>'; return; }
-  el.innerHTML = patrons.map(function(p) {
-    var init = ((p.firstName||'?')[0]+(p.lastName||'?')[0]).toUpperCase();
-    var photoHtml = p.photo ? '<img src="'+esc(p.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,0.3);">' : '<div class="req-avatar" style="border-color:rgba(64,196,255,0.2);color:var(--blue);">'+esc(init)+'</div>';
-    return '<div class="req-card"><div class="req-row">'+photoHtml+
-      '<div class="req-info"><div class="req-name">'+esc((p.firstName||'')+' '+(p.lastName||''))+'</div>'+
-      '<div class="req-detail">'+esc(p.email)+'</div>'+
-      '<div class="req-detail">'+esc(p.phone)+'</div></div></div></div>';
+function renderAP(patrons) {
+  var el=document.getElementById('al-p');
+  if(!patrons.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No patrons yet.</div>';return;}
+  el.innerHTML=patrons.map(function(p){
+    var init=((p.firstName||'?')[0]+(p.lastName||'?')[0]).toUpperCase();
+    var ph=p.photo?'<img src="'+esc(p.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,.3);">':'<div class="rav" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
+    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc((p.firstName||'')+' '+(p.lastName||''))+'</div><div class="rdt">'+esc(p.email)+'</div><div class="rdt">'+esc(p.phone)+'</div></div></div></div>';
   }).join('');
 }
 
-function renderAdminRequests(requests) {
-  var el = document.getElementById('admin-requests-list');
-  if (!requests.length) { el.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No follow requests yet.</div>'; return; }
-  el.innerHTML = requests.map(function(r, i) {
-    var init = (r.patronName||'?').split(' ').map(function(n){return n[0]||'';}).join('').toUpperCase().slice(0,2);
-    var photoHtml = r.patronPhoto ? '<img src="'+esc(r.patronPhoto)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,0.3);">' : '<div class="req-avatar">'+esc(init)+'</div>';
-    var statusHtml = r.status==='approved' ? '<span class="req-status req-approved">✓ Approved</span>' :
-      r.status==='denied' ? '<span class="req-status req-denied">✕ Denied</span>' :
-      '<div class="req-actions"><button class="req-approve" onclick="adminHandleRequest('+i+','approved')">'+'✓ Approve</button><button class="req-deny" onclick="adminHandleRequest('+i+','denied')">✕ Deny</button></div>';
-    return '<div class="req-card" id="areq-'+i+'">'+
-      '<div style="font-size:10px;color:var(--muted);margin-bottom:8px;">→ <span style="color:var(--orange);">'+esc(r.tenderName)+'</span></div>'+
-      '<div class="req-row">'+photoHtml+
-      '<div class="req-info"><div class="req-name">'+esc(r.patronName)+'</div>'+
-      '<div class="req-detail">'+esc(r.patronEmail)+'</div></div></div>'+
-      statusHtml+'</div>';
+function renderAR(reqs) {
+  S.adminReqs=reqs;
+  var el=document.getElementById('al-r');
+  if(!reqs.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No follow requests yet.</div>';return;}
+  el.innerHTML=reqs.map(function(r,i){
+    var init=(r.patronName||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=r.patronPhoto?'<img src="'+esc(r.patronPhoto)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    var st=r.status==='approved'?'<span class="rst rapst">✓ Approved</span>':r.status==='denied'?'<span class="rst rdnst">✕ Denied</span>':'<div class="racts"><button class="rappr" onclick="aReq('+i+',\'approved\')">✓ Approve</button><button class="rdeny" onclick="aReq('+i+',\'denied\')">✕ Deny</button></div>';
+    return '<div class="rcard" id="ar'+i+'"><div style="font-size:10px;color:var(--mu);margin-bottom:8px;">→ <span style="color:var(--or);">'+esc(r.tenderName)+'</span></div><div class="rrow">'+ph+'<div><div class="rnm">'+esc(r.patronName||'Unknown')+'</div><div class="rdt">'+esc(r.patronEmail||'')+'</div></div></div>'+st+'</div>';
   }).join('');
-  window._adminRequests = requests;
 }
 
-function adminHandleRequest(idx, status) {
-  var req = window._adminRequests[idx];
-  if (!req) return;
-  fetch(SCRIPT_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'action=adminUpdateFollow&tenderName='+encodeURIComponent(req.tenderName)+'&patronEmail='+encodeURIComponent(req.patronEmail)+'&status='+encodeURIComponent(status)
-  }).catch(function(){});
-  var card = document.getElementById('areq-'+idx);
-  var actDiv = card.querySelector('.req-actions');
-  if (actDiv) actDiv.outerHTML = status==='approved' ? '<span class="req-status req-approved">✓ Approved</span>' : '<span class="req-status req-denied">✕ Denied</span>';
-  showToast(status==='approved'?'✓ Approved!':'✕ Denied');
+function aReq(idx,status) {
+  var r=S.adminReqs[idx]; if(!r) return;
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=adminUpdateFollow&tenderName='+enc(r.tenderName)+'&patronEmail='+enc(r.patronEmail)+'&status='+enc(status)}).catch(function(){});
+  var c=document.getElementById('ar'+idx);
+  var a=c.querySelector('.racts');
+  if(a) a.outerHTML=status==='approved'?'<span class="rst rapst">✓ Approved</span>':'<span class="rst rdnst">✕ Denied</span>';
+  toast(status==='approved'?'✓ Approved!':'✕ Denied');
 }
 
-function esc(s) {
-  return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+// TOAST
+var tt;
+function toast(msg,or) {
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(or?' or':'')+' show';
+  clearTimeout(tt);
+  tt=setTimeout(function(){t.classList.remove('show');},2000);
 }
-}
+
+// UTIL
+function enc(s){return encodeURIComponent(s||'');}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 </script>
 </body>
 </html>
