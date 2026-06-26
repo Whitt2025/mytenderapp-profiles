@@ -477,7 +477,7 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
 </nav>
 
 <!-- PROFILE MODAL -->
-<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)" style="display:none;">
   <div class="modal" id="modal" style="position:relative;">
     <div class="modal-handle"></div>
     <button class="modal-close" onclick="closeModal(null)">✕</button>
@@ -1178,4 +1178,6 @@ function toast(msg,or){
 
 function enc(s){return encodeURIComponent(s||'');}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
--
+</script>
+</body>
+</html>
