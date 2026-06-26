@@ -1056,4 +1056,126 @@ function lockAdmin(){
   document.getElementById('apin-in').value='';
   document.getElementById('apin-em').value='';
 }
+
+function aTab(t){
+  ['t','p','r'].forEach(function(x){
+    document.getElementById('av-'+x).style.display=x===t?'block':'none';
+    document.getElementById('at-'+x).className='atab'+(x===t?' on':'');
+  });
+}
+
+function loadAdmin(){
+  fetch(SCRIPT_URL+'?action=admin')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.result!=='success'){toast('Could not load.',true);return;}
+      document.getElementById('a-tn').textContent=(d.tenders||[]).length;
+      document.getElementById('a-pn').textContent=(d.patrons||[]).length;
+      document.getElementById('a-rn').textContent=(d.requests||[]).length;
+      renderAT(d.tenders||[]);
+      renderAP(d.patrons||[]);
+      renderAR(d.requests||[]);
+    }).catch(function(){toast('Could not load.',true);});
+}
+
+function renderAT(tenders){
+  var el=document.getElementById('al-t');
+  if(!tenders.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No tenders yet.</div>';return;}
+  el.innerHTML=tenders.map(function(t,i){
+    var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=t.photo?'<img src="'+esc(t.photo)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(t.name)+'</div><div class="rdt">'+esc(t.est)+'</div><div class="rdt" style="color:var(--or);">❤️ '+(t.likes||0)+' likes</div></div></div>'
+      +'<div style="font-size:11px;color:var(--mu);margin-top:8px;font-style:italic;">"'+esc(t.vibe)+'"</div></div>';
+  }).join('');
+  S.allTenders=tenders;
+}
+
+function renderAP(patrons){
+  var el=document.getElementById('al-p');
+  if(!patrons.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No patrons yet.</div>';return;}
+  el.innerHTML=patrons.map(function(p,i){
+    var nm=((p.firstName||'')+' '+(p.lastName||'')).trim();
+    var init=nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=p.photo?'<img src="'+esc(p.photo)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,.3);">':'<div class="rav" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
+    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(nm)+'</div><div class="rdt">'+esc(p.email||'')+'</div></div></div></div>';
+  }).join('');
+  S.allPatrons=patrons;
+}
+
+function renderAR(reqs){
+  S.adminReqs=reqs;
+  var sorted=reqs.slice().sort(function(a,b){return a.status==='pending'?-1:1;});
+  var el=document.getElementById('al-r');
+  if(!sorted.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No follow requests yet.</div>';return;}
+  el.innerHTML=sorted.map(function(r,i){
+    var init=(r.patronName||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=r.patronPhoto?'<img src="'+esc(r.patronPhoto)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    var st=r.status==='approved'?'<span class="rst rapst">✓ Approved</span>':r.status==='denied'?'<span class="rst rdnst">✕ Denied</span>':'<div class="racts"><button class="rappr" onclick="aReq('+i+',\'approved\')">✓ Approve</button><button class="rdeny" onclick="aReq('+i+',\'denied\')">✕ Deny</button></div>';
+    return '<div class="rcard" id="ar'+i+'"><div style="font-size:10px;color:var(--mu);margin-bottom:6px;">→ <span style="color:var(--or);">'+esc(r.tenderName)+'</span></div>'
+      +'<div class="rrow">'+ph+'<div><div class="rnm">'+esc(r.patronName||'Unknown')+'</div><div class="rdt">'+esc(r.patronEmail||'')+'</div></div></div>'+st+'</div>';
+  }).join('');
+  S.sortedAdminReqs=sorted;
+}
+
+function aReq(idx,status){
+  var r=S.sortedAdminReqs?S.sortedAdminReqs[idx]:null;
+  if(!r)return;
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=adminUpdateFollow&tenderName='+enc(r.tenderName)+'&patronEmail='+enc(r.patronEmail)+'&status='+enc(status)}).catch(function(){});
+  var c=document.getElementById('ar'+idx);
+  var a=c?c.querySelector('.racts'):null;
+  if(a)a.outerHTML=status==='approved'?'<span class="rst rapst">✓ Approved</span>':'<span class="rst rdnst">✕ Denied</span>';
+  toast(status==='approved'?'✓ Approved!':'✕ Denied');
+}
+
+function openModal(type,idx){
+  var p=type==='t'?S.allTenders[idx]:S.allPatrons[idx];
+  if(!p)return;
+  var isPatron=type==='p';
+  var nm=isPatron?((p.firstName||'')+' '+(p.lastName||'')).trim():p.name;
+  var init=nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+  var pwrap=document.getElementById('modal-photo-wrap');
+  if(p.photo){pwrap.innerHTML='<img class="modal-photo" src="'+esc(p.photo)+'" alt="'+esc(nm)+'">';}
+  else{pwrap.innerHTML='<div class="modal-ph">'+esc(init)+'</div>';}
+  document.getElementById('modal-name').textContent=nm;
+  var bar=document.getElementById('modal-bar');
+  var vibe=document.getElementById('modal-vibe');
+  if(isPatron){bar.textContent='👀 Patron';bar.style.color='var(--bl)';vibe.textContent='';}
+  else{bar.textContent='🍸 '+(p.est||'');bar.style.color='var(--gn)';vibe.textContent=p.vibe?'"'+p.vibe+'"':'';}
+  var act=document.getElementById('modal-action');
+  var isMe=S.myProf&&S.myProf.name===nm;
+  if(isMe){act.innerHTML='<div style="text-align:center;font-size:11px;color:var(--mu);padding:4px 0;">This is your profile</div>';}
+  else if(isPatron){act.innerHTML='<button class="bgn" onclick="followPatron(\''+esc(nm)+'\');closeModal(null);" style="margin-top:0;"><div class="binn"><i class="ti ti-user-plus"></i><span>Follow '+esc(nm.split(' ')[0])+'</span></div></button>';}
+  else{act.innerHTML='<button class="bor" onclick="followTenderFromModal(\''+esc(nm)+'\');closeModal(null);" style="margin-top:0;"><div class="binn"><i class="ti ti-heart"></i><span>Send Follow Request</span></div></button>';}
+  document.getElementById('modal-bg').classList.add('show');
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal-bg'))return;
+  document.getElementById('modal-bg').classList.remove('show');
+}
+
+function followTenderFromModal(name){
+  var pn=S.myProf?S.myProf.name:'Anonymous';
+  var pe=S.myProf?S.myProf.email:'';
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=follow&tenderName='+enc(name)+'&patronName='+enc(pn)+'&patronEmail='+enc(pe)}).catch(function(){});
+  toast('❤️  Follow Request Sent!');
+}
+
+function followPatron(name){
+  toast('✓ Following '+name.split(' ')[0]+'!');
+}
+
+var tt;
+function toast(msg,or){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(or?' or':'')+' show';
+  clearTimeout(tt);
+  tt=setTimeout(function(){t.classList.remove('show');},2000);
+}
+
+function enc(s){return encodeURIComponent(s||'');}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 -
