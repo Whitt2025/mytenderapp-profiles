@@ -390,6 +390,15 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
         <div class="irow"><span class="ilbl">Email</span><span class="ival" id="myem">—</span></div>
       </div>
       <div id="dashlnk" style="display:none;">
+        <div style="background:var(--cd);border:1px solid var(--eg);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:2px;">On Shift Tonight</div>
+            <div style="font-size:11px;color:var(--mu);" id="shift-label">Let patrons know you're working</div>
+          </div>
+          <div id="shift-toggle" onclick="toggleShift()" style="width:48px;height:26px;border-radius:13px;background:var(--eg);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+            <div id="shift-knob" style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
+          </div>
+        </div>
         <button class="bor" onclick="go('tender-dash')"><div class="binn"><i class="ti ti-shield-lock"></i><span>Tender Dashboard</span></div></button>
       </div>
       <button class="bout" onclick="clearProfile()" style="margin-top:8px;">SWITCH / RESET PROFILE</button>
@@ -477,7 +486,7 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
   <button class="ni bl" id="nav-people" onclick="go('people');loadPeople();"><i class="ti ti-users" style="color:var(--bl);"></i><span class="nl" style="color:var(--bl);">People</span></button>
   <button class="ni pk" id="nav-myprofile" onclick="go('myprofile')"><i class="ti ti-user-circle"></i><span class="nl">My Profile</span></button>
   <button class="ni" id="nav-tender-dash" style="display:none;" onclick="go('tender-dash')"><i class="ti ti-shield-lock" style="color:var(--pk);"></i><span class="nl" style="color:var(--pk);">Dashboard</span></button>
-  <button class="ni" id="nav-admin" style="display:none;" onclick="go('admin')"><i class="ti ti-settings" style="color:var(--or);"></i><span class="nl" style="color:var(--or);">Admin</span></button>
+  <button class="ni" id="nav-admin" onclick="go('admin')"><i class="ti ti-settings" style="color:var(--or);"></i><span class="nl" style="color:var(--or);">Admin</span></button>
 </nav>
 
 <!-- PROFILE MODAL -->
@@ -559,12 +568,20 @@ tick(); setInterval(tick,10000);
 
 // ── INIT (check for saved profile) ────────────────
 window.addEventListener('DOMContentLoaded', function() {
+  // Always show bottom nav with admin accessible
+  var nav = document.getElementById('bnav');
+  nav.style.display = 'flex';
+  document.getElementById('nav-admin').style.display = 'flex';
+
   var saved = loadSavedProfile();
   if (saved) {
     S.myProf = saved;
     S.role   = saved.type;
-    showNav();
+    if (saved.type === 'tender') {
+      document.getElementById('nav-tender-dash').style.display = 'flex';
+    }
     fillMyProf();
+    setTimeout(initShiftToggle, 100);
     go('discover');
   }
 });
@@ -584,6 +601,7 @@ function go(name) {
 function showNav() {
   var nav = document.getElementById('bnav');
   nav.style.display = 'flex';
+  document.getElementById('nav-admin').style.display = 'flex';
   if (S.role==='tender') {
     document.getElementById('nav-tender-dash').style.display = 'flex';
   }
@@ -849,8 +867,9 @@ function buildCard(p,sp,wrap) {
   var ph=p.photo
     ?'<img class="cphoto" src="'+esc(p.photo)+'" alt="'+esc(p.name)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'+'<div class="cphoto-ph" style="display:none;">'+esc(p.init)+'</div>'
     :'<div class="cphoto-ph">'+esc(p.init)+'</div>';
+  var shiftBadge = p.onShift ? '<span style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,230,118,.15);color:var(--gn);border:1px solid rgba(0,230,118,.35);border-radius:20px;padding:2px 7px;margin-left:6px;vertical-align:middle;">On Shift</span>' : '';
   c.innerHTML=ph+'<div class="cgrad"></div><div class="stamp sl">LIKE</div><div class="stamp sn">NOPE</div>'
-    +'<div class="cinfo"><div class="cname">'+esc(p.name)+'</div><div class="cbar">🍸 '+esc(p.est)+'</div><div class="cvibe">"'+esc(p.vibe)+'"</div></div>';
+    +'<div class="cinfo"><div class="cname">'+esc(p.name)+shiftBadge+'</div><div class="cbar">🍸 '+esc(p.est)+'</div><div class="cvibe">"'+esc(p.vibe)+'"</div></div>';
   wrap.appendChild(c);
 }
 
@@ -1138,25 +1157,49 @@ function loadAdmin(){
 function renderAT(tenders){
   var el=document.getElementById('al-t');
   if(!tenders.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No tenders yet.</div>';return;}
-  el.innerHTML=tenders.map(function(t,i){
-    var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
-    var ph=t.photo?'<img src="'+esc(t.photo)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
-    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(t.name)+'</div><div class="rdt">'+esc(t.est)+'</div><div class="rdt" style="color:var(--or);">❤️ '+(t.likes||0)+' likes</div></div></div>'
-      +'<div style="font-size:11px;color:var(--mu);margin-top:8px;font-style:italic;">"'+esc(t.vibe)+'"</div></div>';
-  }).join('');
   S.allTenders=tenders;
+  var items = tenders.map(function(t,i){
+    var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=t.photo?'<img src="'+esc(t.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,90,26,.3);">':'<div class="rav">'+esc(init)+'</div>';
+    var shift = t.onShift ? '<span style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,230,118,.12);color:var(--gn);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:2px 8px;margin-left:6px;">On Shift</span>' : '';
+    return '<div class="rcard" data-idx="'+i+'" style="cursor:pointer;">'
+      +'<div class="rrow">'+ph
+      +'<div style="flex:1;"><div class="rnm">'+esc(t.name)+shift+'</div>'
+      +'<div class="rdt">🍸 '+esc(t.est)+'</div>'
+      +'<div class="rdt" style="color:var(--or);">❤️ '+(t.likes||0)+' likes</div></div>'
+      +'<i class="ti ti-chevron-right" style="color:var(--dm);font-size:16px;flex-shrink:0;"></i></div>'
+      +'<div style="font-size:11px;color:var(--mu);margin-top:6px;font-style:italic;">"'+esc(t.vibe)+'"</div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML = items;
+  el.querySelectorAll('.rcard').forEach(function(card){
+    card.addEventListener('click', function(){
+      var idx = parseInt(this.dataset.idx);
+      openModal('t', idx);
+    });
+  });
 }
 
 function renderAP(patrons){
   var el=document.getElementById('al-p');
   if(!patrons.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No patrons yet.</div>';return;}
-  el.innerHTML=patrons.map(function(p,i){
+  S.allPatrons=patrons;
+  var items=patrons.map(function(p,i){
     var nm=((p.firstName||'')+' '+(p.lastName||'')).trim();
     var init=nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
-    var ph=p.photo?'<img src="'+esc(p.photo)+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,.3);">':'<div class="rav" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
-    return '<div class="rcard"><div class="rrow">'+ph+'<div><div class="rnm">'+esc(nm)+'</div><div class="rdt">'+esc(p.email||'')+'</div></div></div></div>';
+    var ph=p.photo?'<img src="'+esc(p.photo)+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(64,196,255,.3);">':'<div class="rav" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
+    return '<div class="rcard" data-idx="'+i+'" style="cursor:pointer;">'
+      +'<div class="rrow">'+ph
+      +'<div style="flex:1;"><div class="rnm">'+esc(nm)+'</div><div class="rdt">'+esc(p.email||'')+'</div></div>'
+      +'<i class="ti ti-chevron-right" style="color:var(--dm);font-size:16px;flex-shrink:0;"></i></div>'
+      +'</div>';
   }).join('');
-  S.allPatrons=patrons;
+  el.innerHTML=items;
+  el.querySelectorAll('.rcard').forEach(function(card){
+    card.addEventListener('click',function(){
+      openModal('p', parseInt(this.dataset.idx));
+    });
+  });
 }
 
 function renderAR(reqs){
@@ -1198,7 +1241,11 @@ function openModal(type,idx){
   var bar=document.getElementById('modal-bar');
   var vibe=document.getElementById('modal-vibe');
   if(isPatron){bar.textContent='👀 Patron';bar.style.color='var(--bl)';vibe.textContent='';}
-  else{bar.textContent='🍸 '+(p.est||'');bar.style.color='var(--gn)';vibe.textContent=p.vibe?'"'+p.vibe+'"':'';}
+  else{
+    bar.innerHTML='🍸 '+esc(p.est||'')+(p.onShift?' <span style="font-size:10px;font-weight:600;letter-spacing:.06em;background:rgba(0,230,118,.12);color:var(--gn);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:2px 8px;margin-left:4px;">On Shift</span>':'');
+    bar.style.color='var(--gn)';
+    vibe.textContent=p.vibe?'"'+p.vibe+'"':'';
+  }
   var act=document.getElementById('modal-action');
   var isMe=S.myProf&&S.myProf.name===nm;
   if(isMe){act.innerHTML='<div style="text-align:center;font-size:11px;color:var(--mu);padding:4px 0;">This is your profile</div>';}
@@ -1222,6 +1269,47 @@ function followTenderFromModal(name){
 
 function followPatron(name){
   toast('✓ Following '+name.split(' ')[0]+'!');
+}
+
+function toggleShift() {
+  S.myProf.onShift = !S.myProf.onShift;
+  saveProfile(S.myProf);
+  var toggle = document.getElementById('shift-toggle');
+  var knob   = document.getElementById('shift-knob');
+  var label  = document.getElementById('shift-label');
+  if (S.myProf.onShift) {
+    toggle.style.background = 'var(--gn)';
+    knob.style.left = '24px';
+    label.textContent = "You're live — patrons can see you're working";
+    label.style.color = 'var(--gn)';
+    toast('✓ You\'re on shift!');
+  } else {
+    toggle.style.background = 'var(--eg)';
+    knob.style.left = '2px';
+    label.textContent = "Let patrons know you're working";
+    label.style.color = 'var(--mu)';
+    toast('Off shift');
+  }
+  // Post shift status to backend
+  fetch(SCRIPT_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'action=shift&email='+enc(S.myProf.email)+'&onShift='+(S.myProf.onShift?'1':'0')
+  }).catch(function(){});
+}
+
+function initShiftToggle() {
+  if (!S.myProf || S.myProf.type !== 'tender') return;
+  var toggle = document.getElementById('shift-toggle');
+  var knob   = document.getElementById('shift-knob');
+  var label  = document.getElementById('shift-label');
+  if (!toggle) return;
+  if (S.myProf.onShift) {
+    toggle.style.background = 'var(--gn)';
+    knob.style.left = '24px';
+    label.textContent = "You're live — patrons can see you're working";
+    label.style.color = 'var(--gn)';
+  }
 }
 
 var tt;
