@@ -338,6 +338,10 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
       <span class="appname">mytenderapp</span>
     </div>
     <div class="chip"><span class="dot"></span><span id="tcnt">-</span> tenders</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:4px;">
+      <button id="disc-tab-t" onclick="setDiscoverTab('t')" style="padding:5px 16px;border-radius:20px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;border:1.5px solid var(--or);background:var(--or);color:#fff;cursor:pointer;">Tenders</button>
+      <button id="disc-tab-p" onclick="setDiscoverTab('p')" style="padding:5px 16px;border-radius:20px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;border:1.5px solid var(--eg);background:transparent;color:var(--mu);cursor:pointer;">Patrons</button>
+    </div>
   </div>
   <div class="dctr" id="dctr"></div>
   <div class="dwrap" id="dwrap"><div class="ldst"><div class="ldsp"></div><div class="ldtx">Loading Tenders…</div></div></div>
@@ -417,7 +421,7 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
       <div class="pintitle">ENTER YOUR PIN</div>
       <div class="pinsub">Enter your email and Tender PIN to see who wants to follow you.</div>
       <div class="fld" style="margin-bottom:12px;text-align:left;"><div class="flbl">Your Email</div><input id="tpin-em" type="email" placeholder="your@email.com"></div>
-      <div class="fld" style="margin-bottom:12px;"><div class="flbl">PIN</div><input class="pininp" id="tpin-in" type="number" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="tpin-err">Incorrect email or PIN.</div></div>
+      <div class="fld" style="margin-bottom:12px;"><div class="flbl">PIN</div><input class="pininp" id="tpin-in" type="tel" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="tpin-err">Incorrect email or PIN.</div></div>
       <button class="bor" onclick="checkTenderPin()"><div class="binn"><i class="ti ti-lock-open"></i><span>Access Dashboard</span></div></button>
     </div>
   </div>
@@ -445,7 +449,7 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
       <div class="pintitle">ADMIN ACCESS</div>
       <div class="pinsub">Enter your admin email and PIN to access the full platform dashboard.</div>
       <div class="fld" style="margin-bottom:12px;text-align:left;"><div class="flbl">Admin Email</div><input id="apin-em" type="email" placeholder="your@email.com"></div>
-      <div class="fld" style="margin-bottom:12px;"><div class="flbl">Admin PIN</div><input class="pininp" id="apin-in" type="number" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="apin-err">Incorrect email or PIN.</div></div>
+      <div class="fld" style="margin-bottom:12px;"><div class="flbl">Admin PIN</div><input class="pininp" id="apin-in" type="tel" placeholder="••••" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"><div class="pinerr" id="apin-err">Incorrect email or PIN.</div></div>
       <button class="bor" onclick="checkAdminPin()"><div class="binn"><i class="ti ti-shield-check"></i><span>Access Admin Dashboard</span></div></button>
     </div>
   </div>
@@ -517,7 +521,8 @@ var S = {
   activeCard:null, dragging:false, sx:0, cx:0,
   adminReqs:[], dashReqs:[],
   allTenders:[], allPatrons:[],
-  peopleLoaded:false
+  peopleLoaded:false,
+  patronProfs:[]
 };
 
 // ── LOCAL STORAGE ─────────────────────────────────
@@ -765,6 +770,56 @@ function loadProfs() {
 // ── DECK ─────────────────────────────────────────
 function resetDeck(){S.idx=0;renderDeck();}
 
+var discoverTab = 't';
+
+function setDiscoverTab(tab) {
+  discoverTab = tab;
+  var tBtn = document.getElementById('disc-tab-t');
+  var pBtn = document.getElementById('disc-tab-p');
+  if (tab === 't') {
+    tBtn.style.background = 'var(--or)'; tBtn.style.borderColor = 'var(--or)'; tBtn.style.color = '#fff';
+    pBtn.style.background = 'transparent'; pBtn.style.borderColor = 'var(--eg)'; pBtn.style.color = 'var(--mu)';
+    S.idx = 0; renderDeck();
+  } else {
+    pBtn.style.background = 'var(--bl)'; pBtn.style.borderColor = 'var(--bl)'; pBtn.style.color = '#0d0d14';
+    tBtn.style.background = 'transparent'; tBtn.style.borderColor = 'var(--eg)'; tBtn.style.color = 'var(--mu)';
+    if (!S.patronProfs || !S.patronProfs.length) {
+      loadPatronProfs();
+    } else {
+      S.idx = 0; renderDeck();
+    }
+  }
+}
+
+function loadPatronProfs() {
+  var wrap = document.getElementById('dwrap');
+  wrap.innerHTML = '<div class="ldst"><div class="ldsp"></div><div class="ldtx">Loading Patrons…</div></div>';
+  fetch(SCRIPT_URL + '?action=admin')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var patrons = (d.result === 'success' && d.patrons) ? d.patrons : [];
+      S.patronProfs = patrons.map(function(p){
+        var nm = ((p.firstName||'')+' '+(p.lastName||'')).trim();
+        return {
+          name: nm,
+          est: '👀 Patron',
+          vibe: '',
+          photo: p.photo || '',
+          init: nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2) || '??',
+          likes: 0,
+          type: 'patron'
+        };
+      });
+      if (!S.allPatrons || !S.allPatrons.length) S.allPatrons = d.patrons || [];
+      document.getElementById('tcnt').textContent = S.patronProfs.length;
+      S.idx = 0; renderDeck();
+    })
+    .catch(function(){
+      S.patronProfs = [];
+      document.getElementById('dwrap').innerHTML = '<div class="ldst"><div class="ldtx" style="color:var(--mu);">No patrons found yet.</div></div>';
+    });
+}
+
 function renderDeck() {
   var wrap=document.getElementById('dwrap');
   var empty=document.getElementById('dempty');
@@ -772,15 +827,16 @@ function renderDeck() {
   var hint=document.getElementById('shint');
   var ctr=document.getElementById('dctr');
   wrap.innerHTML=''; ctr.innerHTML=''; S.activeCard=null;
-  var rem=S.profs.length-S.idx;
+  var activeProfs = discoverTab === 'p' ? (S.patronProfs||[]) : S.profs;
+  var rem=activeProfs.length-S.idx;
   if(rem<=0){empty.classList.add('show');acts.style.display='none';hint.style.display='none';return;}
   empty.classList.remove('show');acts.style.display='flex';hint.style.display='block';
-  S.profs.forEach(function(_,i){var d=document.createElement('div');d.className='cdot'+(i===S.idx?' on':'');ctr.appendChild(d);});
+  activeProfs.forEach(function(_,i){var d=document.createElement('div');d.className='cdot'+(i===S.idx?' on':'');ctr.appendChild(d);});
   var n=Math.min(3,rem);
   for(var i=n-1;i>=0;i--){
     var idx=S.idx+i;
-    if(idx>=S.profs.length) continue;
-    buildCard(S.profs[idx],i,wrap);
+    if(idx>=activeProfs.length) continue;
+    buildCard(activeProfs[idx],i,wrap);
   }
   var top=wrap.querySelector('[data-top="1"]');
   if(top) attachDrag(top);
@@ -843,13 +899,14 @@ function flyOut(dir){
   var x=dir==='right'?window.innerWidth+300:-(window.innerWidth+300);
   c.style.transition='transform .42s cubic-bezier(.22,1,.36,1)';
   c.style.transform='translateX('+x+'px) rotate('+(dir==='right'?25:-25)+'deg)';
-  if(dir==='right'){toast('❤️  Follow Request Sent!');sendFollow(S.idx);}
+  if(dir==='right'){toast(discoverTab==='p'?'✓ Following!':'❤️  Follow Request Sent!');sendFollow(S.idx);}
   S.idx++;
   setTimeout(renderDeck,400);
 }
 
 function sendFollow(idx){
-  var t=S.profs[idx];if(!t)return;
+  var activeProfs = discoverTab === 'p' ? (S.patronProfs||[]) : S.profs;
+  var t=activeProfs[idx];if(!t)return;
   var pn=S.myProf?S.myProf.name:'Anonymous';
   var pe=S.myProf?S.myProf.email:'';
   fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
