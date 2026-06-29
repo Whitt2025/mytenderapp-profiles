@@ -224,6 +224,9 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
 .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.5);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
 /* PEOPLE LIST */
+.home-tile{background:var(--cd);border:1.5px solid var(--eg);border-radius:12px;padding:18px 14px;cursor:pointer;transition:transform .15s,border-color .2s;text-align:center;}
+.home-tile:hover{transform:translateY(-2px);}
+.home-tile:active{transform:scale(.97);}
 .plist-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--eg);cursor:pointer;transition:opacity .15s;}
 .plist-item:last-child{border-bottom:none;}
 .plist-item:hover{opacity:.8;}
@@ -234,6 +237,83 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
 </style>
 </head>
 <body>
+
+<!-- HOME DASHBOARD -->
+<div class="screen" id="screen-home">
+  <div class="sbar"><span id="c8">9:41</span><span style="display:flex;gap:4px;"><i class="ti ti-wifi" style="font-size:11px;"></i><i class="ti ti-battery-2" style="font-size:11px;"></i></span></div>
+  <div style="padding:12px 16px 24px;">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--or);text-shadow:0 0 16px rgba(255,90,26,.3);">mytenderapp</div>
+        <div style="font-size:12px;color:var(--mu);" id="home-greeting">Welcome back</div>
+      </div>
+      <div id="home-avatar" onclick="go('myprofile')" style="width:44px;height:44px;border-radius:50%;background:rgba(255,90,26,.12);border:1.5px solid rgba(255,90,26,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--or);overflow:hidden;"></div>
+    </div>
+
+    <!-- On Shift toggle (tenders only) -->
+    <div id="home-shift-card" style="display:none;background:var(--cd);border:1px solid var(--eg);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px;">On Shift Tonight</div>
+          <div style="font-size:11px;color:var(--mu);" id="home-shift-label">Let patrons know you're working</div>
+        </div>
+        <div id="home-shift-toggle" onclick="toggleShift();syncShiftUI();" style="width:44px;height:24px;border-radius:12px;background:var(--eg);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;">
+          <div id="home-shift-knob" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="srow" id="home-stats" style="display:none;">
+      <div class="scrd"><div class="snum" style="color:var(--or);" id="home-likes">0</div><div class="slbl">Likes</div></div>
+      <div class="scrd"><div class="snum" style="color:var(--pk);" id="home-requests">0</div><div class="slbl">Requests</div></div>
+      <div class="scrd"><div class="snum" style="color:var(--gn);" id="home-approved">0</div><div class="slbl">Approved</div></div>
+    </div>
+
+    <!-- Main action grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div class="home-tile" onclick="go('discover');setDiscoverTab('t');" style="border-color:var(--gn);">
+        <i class="ti ti-cards" style="font-size:28px;color:var(--gn);margin-bottom:8px;display:block;"></i>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--gn);">Find Your Tender</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:3px;">Swipe to discover</div>
+      </div>
+      <div class="home-tile" onclick="go('people');" style="border-color:var(--or);">
+        <i class="ti ti-star" style="font-size:28px;color:var(--or);margin-bottom:8px;display:block;"></i>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--or);">Pour Score</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:3px;">Coming soon</div>
+      </div>
+      <div class="home-tile" onclick="go('people');" style="border-color:var(--pk);">
+        <i class="ti ti-users" style="font-size:28px;color:var(--pk);margin-bottom:8px;display:block;"></i>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--pk);">Wingers</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:3px;">Coming soon</div>
+      </div>
+      <div class="home-tile" onclick="go('people');" style="border-color:var(--bl);">
+        <i class="ti ti-ticket" style="font-size:28px;color:var(--bl);margin-bottom:8px;display:block;"></i>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--bl);">Specials & Events</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:3px;">Coming soon</div>
+      </div>
+    </div>
+
+    <!-- My Favorites full width -->
+    <div class="home-tile" onclick="go('people');" style="border-color:#8855ff;display:flex;align-items:center;gap:12px;padding:16px 20px;">
+      <i class="ti ti-heart" style="font-size:26px;color:#8855ff;flex-shrink:0;"></i>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#8855ff;">My Favorites</div>
+        <div style="font-size:10px;color:var(--mu);margin-top:2px;">Your followed tenders & friends</div>
+      </div>
+      <i class="ti ti-chevron-right" style="margin-left:auto;color:var(--dm);font-size:18px;"></i>
+    </div>
+
+    <!-- On shift tenders (live now) -->
+    <div style="margin-top:14px;">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);margin-bottom:10px;">Live Tonight</div>
+      <div id="home-live" style="font-size:12px;color:var(--dm);">Loading…</div>
+    </div>
+
+  </div>
+</div>
 
 <!-- LANDING -->
 <div class="screen active" id="screen-landing">
@@ -482,7 +562,8 @@ input.err,textarea.err{border-color:rgba(255,64,64,.5);}
 
 <!-- BOTTOM NAV -->
 <nav class="bnav" id="bnav" style="display:none;">
-  <button class="ni active" id="nav-discover" onclick="go('discover')"><i class="ti ti-cards"></i><span class="nl">Discover</span></button>
+  <button class="ni active" id="nav-home" onclick="go('home');loadHome();"><i class="ti ti-home"></i><span class="nl">Home</span></button>
+  <button class="ni" id="nav-discover" onclick="go('discover')"><i class="ti ti-cards"></i><span class="nl">Discover</span></button>
   <button class="ni bl" id="nav-people" onclick="go('people');loadPeople();"><i class="ti ti-users" style="color:var(--bl);"></i><span class="nl" style="color:var(--bl);">People</span></button>
   <button class="ni pk" id="nav-myprofile" onclick="go('myprofile')"><i class="ti ti-user-circle"></i><span class="nl">My Profile</span></button>
   <button class="ni" id="nav-tender-dash" style="display:none;" onclick="go('tender-dash')"><i class="ti ti-shield-lock" style="color:var(--pk);"></i><span class="nl" style="color:var(--pk);">Dashboard</span></button>
@@ -562,7 +643,7 @@ function clearProfile() {
 // ── CLOCK ─────────────────────────────────────────
 function tick() {
   var n=new Date(),h=n.getHours()%12||12,m=String(n.getMinutes()).padStart(2,'0'),t=h+':'+m;
-  for(var i=1;i<=7;i++){var e=document.getElementById('c'+i);if(e)e.textContent=t;}
+  for(var i=1;i<=8;i++){var e=document.getElementById('c'+i);if(e)e.textContent=t;}
 }
 tick(); setInterval(tick,10000);
 
@@ -582,7 +663,8 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     fillMyProf();
     setTimeout(initShiftToggle, 100);
-    go('discover');
+    go('home');
+    loadHome();
   }
 });
 
@@ -595,6 +677,7 @@ function go(name) {
   var nm = document.getElementById('nav-'+name);
   if (nm) nm.classList.add('active');
   if (name==='discover' && !S.loaded) loadProfs();
+  if (name==='home') loadHome();
   window.scrollTo(0,0);
 }
 
@@ -956,31 +1039,39 @@ function loadPeople(){
 
 function renderPeopleTenders(tenders){
   var el=document.getElementById('pl-t');
-  if(!tenders.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No tenders yet.</div>';return;}
-  var all=tenders.concat(DEMOS.map(function(d){return{name:d.name,est:d.est,vibe:d.vibe,photo:d.photo,likes:d.likes};}));
+  var all=tenders.concat(DEMOS.map(function(d){return{name:d.name,est:d.est,vibe:d.vibe,photo:d.photo,likes:d.likes,onShift:d.onShift};}));
   var seen={};
   all=all.filter(function(t){if(seen[t.name])return false;seen[t.name]=true;return true;});
+  S.allTenders=all;
+  if(!all.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No tenders yet.</div>';return;}
   el.innerHTML=all.map(function(t,i){
     var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
-    var ph=t.photo?'<img class="plist-av" src="'+esc(t.photo)+'" alt="" onerror="this.outerHTML=\'<div class=\\\"plist-av-ph\\\">'+esc(init)+'</div>\'">':'<div class="plist-av-ph">'+esc(init)+'</div>';
-    return '<div class="plist-item" onclick="openModal(\'t\','+i+')">'
-      +ph+'<div><div class="plist-nm">'+esc(t.name)+'</div><div class="plist-dt">🍸 '+esc(t.est)+'</div></div>'
+    var ph=t.photo?'<img class="plist-av" src="'+esc(t.photo)+'" alt="">':'<div class="plist-av-ph">'+esc(init)+'</div>';
+    var shift=t.onShift?'<span style="font-size:9px;font-weight:600;background:rgba(0,230,118,.12);color:var(--gn);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:2px 6px;margin-left:5px;">On Shift</span>':'';
+    return '<div class="plist-item" data-pidx="'+i+'" data-ptype="t">'
+      +ph+'<div style="flex:1;"><div class="plist-nm">'+esc(t.name)+shift+'</div><div class="plist-dt">🍸 '+esc(t.est)+'</div></div>'
       +'<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--dm);font-size:16px;"></i></div>';
   }).join('');
-  S.allTenders=all;
+  el.querySelectorAll('.plist-item').forEach(function(item){
+    item.addEventListener('click',function(){openModal(this.dataset.ptype,parseInt(this.dataset.pidx));});
+  });
 }
 
 function renderPeoplePatrons(patrons){
   var el=document.getElementById('pl-p');
+  S.allPatrons=patrons;
   if(!patrons.length){el.innerHTML='<div style="text-align:center;padding:32px;color:var(--mu);font-size:13px;">No patrons yet.</div>';return;}
   el.innerHTML=patrons.map(function(p,i){
-    var nm=(p.firstName||'')+' '+(p.lastName||'');
-    var init=nm.trim().split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
-    var ph=p.photo?'<img class="plist-av" src="'+esc(p.photo)+'" alt="" style="border:1px solid rgba(64,196,255,.3);" onerror="this.outerHTML=\'<div class=\\\"plist-av-ph\\\" style=\\\"border-color:rgba(64,196,255,.2);color:var(--bl);\\\">'+esc(init)+'</div>\'">':'<div class="plist-av-ph" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
-    return '<div class="plist-item" onclick="openModal(\'p\','+i+')">'
-      +ph+'<div><div class="plist-nm">'+esc(nm.trim())+'</div><div class="plist-dt">👀 Patron</div></div>'
+    var nm=((p.firstName||'')+' '+(p.lastName||'')).trim();
+    var init=nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+    var ph=p.photo?'<img class="plist-av" src="'+esc(p.photo)+'" alt="" style="border:1px solid rgba(64,196,255,.3);">':'<div class="plist-av-ph" style="border-color:rgba(64,196,255,.2);color:var(--bl);">'+esc(init)+'</div>';
+    return '<div class="plist-item" data-pidx="'+i+'" data-ptype="p">'
+      +ph+'<div style="flex:1;"><div class="plist-nm">'+esc(nm)+'</div><div class="plist-dt">👀 Patron</div></div>'
       +'<i class="ti ti-chevron-right" style="margin-left:auto;color:var(--dm);font-size:16px;"></i></div>';
   }).join('');
+  el.querySelectorAll('.plist-item').forEach(function(item){
+    item.addEventListener('click',function(){openModal(this.dataset.ptype,parseInt(this.dataset.pidx));});
+  });
 }
 
 // ── PROFILE MODAL ─────────────────────────────────
@@ -1228,68 +1319,84 @@ function aReq(idx,status){
   toast(status==='approved'?'✓ Approved!':'✕ Denied');
 }
 
-function openModal(type,idx){
-  var p=type==='t'?S.allTenders[idx]:S.allPatrons[idx];
-  if(!p)return;
-  var isPatron=type==='p';
-  var nm=isPatron?((p.firstName||'')+' '+(p.lastName||'')).trim():p.name;
-  var init=nm.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
-  var pwrap=document.getElementById('modal-photo-wrap');
-  if(p.photo){pwrap.innerHTML='<img class="modal-photo" src="'+esc(p.photo)+'" alt="'+esc(nm)+'">';}
-  else{pwrap.innerHTML='<div class="modal-ph">'+esc(init)+'</div>';}
-  document.getElementById('modal-name').textContent=nm;
-  var bar=document.getElementById('modal-bar');
-  var vibe=document.getElementById('modal-vibe');
-  if(isPatron){bar.textContent='👀 Patron';bar.style.color='var(--bl)';vibe.textContent='';}
-  else{
-    bar.innerHTML='🍸 '+esc(p.est||'')+(p.onShift?' <span style="font-size:10px;font-weight:600;letter-spacing:.06em;background:rgba(0,230,118,.12);color:var(--gn);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:2px 8px;margin-left:4px;">On Shift</span>':'');
-    bar.style.color='var(--gn)';
-    vibe.textContent=p.vibe?'"'+p.vibe+'"':'';
+function loadHome() {
+  if (!S.myProf) return;
+  var p = S.myProf;
+  var firstName = p.type === 'patron' ? (p.firstName || p.name.split(' ')[0]) : p.name.split(' ')[0];
+  var greet = getGreeting() + ', ' + firstName + '.';
+  document.getElementById('home-greeting').textContent = greet;
+
+  // Avatar
+  var av = document.getElementById('home-avatar');
+  if (p.photo) {
+    av.innerHTML = '<img src="'+esc(p.photo)+'" style="width:100%;height:100%;object-fit:cover;">';
+  } else {
+    av.textContent = p.name.split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
   }
-  var act=document.getElementById('modal-action');
-  var isMe=S.myProf&&S.myProf.name===nm;
-  if(isMe){act.innerHTML='<div style="text-align:center;font-size:11px;color:var(--mu);padding:4px 0;">This is your profile</div>';}
-  else if(isPatron){act.innerHTML='<button class="bgn" onclick="followPatron(\''+esc(nm)+'\');closeModal(null);" style="margin-top:0;"><div class="binn"><i class="ti ti-user-plus"></i><span>Follow '+esc(nm.split(' ')[0])+'</span></div></button>';}
-  else{act.innerHTML='<button class="bor" onclick="followTenderFromModal(\''+esc(nm)+'\');closeModal(null);" style="margin-top:0;"><div class="binn"><i class="ti ti-heart"></i><span>Send Follow Request</span></div></button>';}
-  document.getElementById('modal-bg').classList.add('show');
+
+  // Show shift card for tenders
+  var shiftCard = document.getElementById('home-shift-card');
+  if (p.type === 'tender') {
+    shiftCard.style.display = 'block';
+    syncShiftUI();
+  } else {
+    shiftCard.style.display = 'none';
+  }
+
+  // Load live tenders
+  loadLiveTenders();
 }
 
-function closeModal(e){
-  if(e&&e.target!==document.getElementById('modal-bg'))return;
-  document.getElementById('modal-bg').classList.remove('show');
+function getGreeting() {
+  var h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
 }
 
-function followTenderFromModal(name){
-  var pn=S.myProf?S.myProf.name:'Anonymous';
-  var pe=S.myProf?S.myProf.email:'';
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:'action=follow&tenderName='+enc(name)+'&patronName='+enc(pn)+'&patronEmail='+enc(pe)}).catch(function(){});
-  toast('❤️  Follow Request Sent!');
+function syncShiftUI() {
+  var on = S.myProf && S.myProf.onShift;
+  var t1 = document.getElementById('shift-toggle');
+  var k1 = document.getElementById('shift-knob');
+  var l1 = document.getElementById('shift-label');
+  var t2 = document.getElementById('home-shift-toggle');
+  var k2 = document.getElementById('home-shift-knob');
+  var l2 = document.getElementById('home-shift-label');
+  [t1,t2].forEach(function(t){if(t){t.style.background=on?'var(--gn)':'var(--eg)';}});
+  [k1,k2].forEach(function(k){if(k){k.style.left=on?'22px':'2px';}});
+  if(l1){l1.textContent=on?"You're live — patrons can see you're working":"Let patrons know you're working";l1.style.color=on?'var(--gn)':'var(--mu)';}
+  if(l2){l2.textContent=on?"You're live — patrons can see you're working":"Let patrons know you're working";l2.style.color=on?'var(--gn)':'var(--mu)';}
 }
 
-function followPatron(name){
-  toast('✓ Following '+name.split(' ')[0]+'!');
+function loadLiveTenders() {
+  var el = document.getElementById('home-live');
+  if (!el) return;
+  fetch(SCRIPT_URL+'?action=profiles')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var profs = (d.result==='success'&&d.profiles) ? d.profiles : [];
+      var live = profs.filter(function(p){return p.onShift;});
+      if (!live.length) {
+        el.innerHTML = '<div style="color:var(--dm);font-size:12px;font-style:italic;">No tenders on shift right now. Check back tonight.</div>';
+        return;
+      }
+      el.innerHTML = live.map(function(t){
+        var init=(t.name||'?').split(' ').map(function(x){return x[0]||'';}).join('').toUpperCase().slice(0,2);
+        var ph=t.photo?'<img src="'+esc(t.photo)+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(0,230,118,.4);">':'<div style="width:36px;height:36px;border-radius:50%;background:rgba(0,230,118,.1);border:1.5px solid rgba(0,230,118,.3);display:flex;align-items:center;justify-content:center;font-family:Bebas Neue,sans-serif;font-size:13px;color:var(--gn);">'+esc(init)+'</div>';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--eg);">'
+          +ph+'<div><div style="font-size:13px;font-weight:600;color:var(--tx);">'+esc(t.name)+'</div>'
+          +'<div style="font-size:11px;color:var(--gn);">🍸 '+esc(t.est||'')+'</div></div>'
+          +'<span style="margin-left:auto;font-size:9px;font-weight:600;letter-spacing:.08em;background:rgba(0,230,118,.12);color:var(--gn);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:2px 7px;">LIVE</span></div>';
+      }).join('');
+    })
+    .catch(function(){el.innerHTML='';});
 }
 
 function toggleShift() {
   S.myProf.onShift = !S.myProf.onShift;
   saveProfile(S.myProf);
-  var toggle = document.getElementById('shift-toggle');
-  var knob   = document.getElementById('shift-knob');
-  var label  = document.getElementById('shift-label');
-  if (S.myProf.onShift) {
-    toggle.style.background = 'var(--gn)';
-    knob.style.left = '24px';
-    label.textContent = "You're live — patrons can see you're working";
-    label.style.color = 'var(--gn)';
-    toast('✓ You\'re on shift!');
-  } else {
-    toggle.style.background = 'var(--eg)';
-    knob.style.left = '2px';
-    label.textContent = "Let patrons know you're working";
-    label.style.color = 'var(--mu)';
-    toast('Off shift');
-  }
+  syncShiftUI();
+  toast(S.myProf.onShift ? '✓ You\'re on shift!' : 'Off shift');
   // Post shift status to backend
   fetch(SCRIPT_URL, {
     method:'POST', mode:'no-cors',
